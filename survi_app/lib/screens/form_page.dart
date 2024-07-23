@@ -1,8 +1,13 @@
+import 'dart:async';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:survi_app/apis/submit_api.dart';
+import 'package:survi_app/functions/file_picker.dart';
+import 'package:survi_app/functions/push_data_sqlite.dart';
+import 'package:survi_app/screens/agents_survey_list.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
 
@@ -15,6 +20,9 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final TextEditingController descriptionController = TextEditingController();
+ 
+  bool hasInternetConnection = false;
+  StreamSubscription? _internetConnectionStream;
 
   double longitude = 0;
   double latitude = 0;
@@ -26,15 +34,28 @@ class _FormPageState extends State<FormPage> {
   List<File> file = [];
 
   @override
-  void dispose() {
-    super.dispose();
-    descriptionController.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     checkLocationServices();
+    _internetConnectionStream =
+        InternetConnection().onStatusChange.listen((event) {
+      switch (event) {
+        case InternetStatus.connected:
+          setState(() {
+            hasInternetConnection = true;
+          });
+          break;
+        case InternetStatus.disconnected:
+          setState(() {
+            hasInternetConnection = false;
+          });
+          break;
+        default:
+          setState(() {
+            hasInternetConnection = false;
+          });
+      }
+    });
   }
 
   void checkLocationServices() async {
@@ -107,21 +128,33 @@ class _FormPageState extends State<FormPage> {
     );
   }
 
-  void pickFiles() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    allowMultiple: true,
-  );
+ 
 
-  if (result != null) {
-    setState(() {
-      file = result.paths.map((path) => File(path!)).toList();
-    });
-  } else {
-    // User canceled the picker
+  Future<void> pushSurveyDataToDatabase() async {
+    print(hasInternetConnection);
+    if (hasInternetConnection) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Online")));
+
+      pushDataToMongoDB(coordiantes, altitude, speed, time,
+          descriptionController.text.toString(), file);
+    } else if (!hasInternetConnection) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Offline")));
+
+      //  
+
+      pushDataToLocalStorage(descriptionController.text.toString(), longitude,
+          latitude, time, speed, altitude, file);
+    }
   }
-}
 
-  
+  @override
+  void dispose() {
+    super.dispose();
+    descriptionController.dispose();
+    _internetConnectionStream!.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,11 +173,14 @@ class _FormPageState extends State<FormPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomTextField(
-                controller: descriptionController,
-                label: 'Write description Here',
-                suffixIcons: const Icon(Icons.edit_calendar),
-                obscureText: false,
-                textInputType: TextInputType.text, function: () {  }, function2: () {  },),
+              controller: descriptionController,
+              label: 'Write description Here',
+              suffixIcons: const Icon(Icons.edit_calendar),
+              obscureText: false,
+              textInputType: TextInputType.text,
+              function: () {},
+              function2: () {},
+            ),
             SizedBox(
               height: size.height * 0.05,
             ),
@@ -194,26 +230,47 @@ class _FormPageState extends State<FormPage> {
               height: size.height * 0.05,
             ),
             ElevatedButton(
-              onPressed: pickFiles,
+              onPressed: () async {
+                List<File> pickedFiles = await pickFiles(context);
+                setState(() {
+                  file = pickedFiles;
+                });
+              },
               child: const Text('Upload files'),
             ),
             file.isNotEmpty
-              ? Column(
-                  children: file.map((file) {
-                    return Text(file.path.split('/').last);
-                  }).toList(),
-                )
-              : Container(),
+                ? Column(
+                    children: file.map((file) {
+                      return Text(file.path.split('/').last);
+                    }).toList(),
+                  )
+                : Container(),
             SizedBox(
               height: size.height * 0.05,
             ),
             ElevatedButton(
               onPressed: () {
-                pushDataToMongoDB(coordiantes, altitude, speed, time,
-                    descriptionController.text.toString(), file);
+                pushSurveyDataToDatabase();
               },
               child: const Text(
                 'Send',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.05,
+            ),
+            ElevatedButton(
+              onPressed: () {
+              
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AgentsSurveyList()));
+              },
+              child: const Text(
+                'Navigate to Survey List',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),

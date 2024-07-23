@@ -15,7 +15,7 @@ Future<void> loginUser(BuildContext context, String email, String password,
     };
 
     http.Response response = await http.post(
-        Uri.parse('http://192.168.27.208:3000/auth/login'),
+        Uri.parse('http://192.168.150.208:3000/auth/login'),
         headers: headers,
         body: body);
 
