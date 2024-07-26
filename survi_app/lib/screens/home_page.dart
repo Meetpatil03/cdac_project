@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/login_page.dart';
-
-
+import 'package:survi_app/screens/read_log_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -31,16 +30,33 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const FormPage(),
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const FormPage(),
+                  ),
+                );
+              },
+              child: const Text(
+                'Survey Form',
+                style: TextStyle(fontSize: 20),
               ),
-            );
-          },
-          
-          child: const Text('Survey Form',style: TextStyle(fontSize: 20),),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReadLogs()));
+                },
+                child: const Text('Navigate to Read Logs')),
+          ],
         ),
       ),
     );

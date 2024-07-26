@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -20,7 +19,7 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final TextEditingController descriptionController = TextEditingController();
- 
+
   bool hasInternetConnection = false;
   StreamSubscription? _internetConnectionStream;
 
@@ -128,11 +127,13 @@ class _FormPageState extends State<FormPage> {
     );
   }
 
- 
-
   Future<void> pushSurveyDataToDatabase() async {
+    bool hasInternet = await InternetConnection().hasInternetAccess;
+    print("Checking Internet Connection : $hasInternet");
     print(hasInternetConnection);
+
     if (hasInternetConnection) {
+      print("i am in the if Block Statement ${hasInternetConnection}");
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Online")));
 
@@ -142,7 +143,7 @@ class _FormPageState extends State<FormPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Offline")));
 
-      //  
+      //
 
       pushDataToLocalStorage(descriptionController.text.toString(), longitude,
           latitude, time, speed, altitude, file);
@@ -262,8 +263,6 @@ class _FormPageState extends State<FormPage> {
             ),
             ElevatedButton(
               onPressed: () {
-              
-
                 Navigator.push(
                     context,
                     MaterialPageRoute(

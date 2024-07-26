@@ -15,7 +15,7 @@ Future<void> loginUser(BuildContext context, String email, String password,
     };
 
     http.Response response = await http.post(
-        Uri.parse('http://192.168.150.208:3000/auth/login'),
+        Uri.parse('https://d28e-2409-4081-2c01-3dd6-6108-af72-1527-fda.ngrok-free.app/auth/login'),
         headers: headers,
         body: body);
 

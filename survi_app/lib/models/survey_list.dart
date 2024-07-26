@@ -1,5 +1,6 @@
 class SurveyList {
   final int id;
+  
   final String description;
   final double longitude;
   final double latitude;
@@ -7,7 +8,12 @@ class SurveyList {
   final String speed;
   final String altitude;
 
-  SurveyList({required this.id, required this.description, required this.longitude, required this.latitude, required this.timestamp, required this.speed, required this.altitude});
-
-  
+  SurveyList( 
+      {required this.id,
+      required this.description,
+      required this.longitude,
+      required this.latitude,
+      required this.timestamp,
+      required this.speed,
+      required this.altitude});
 }

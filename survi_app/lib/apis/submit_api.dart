@@ -30,7 +30,7 @@ Future<void> pushDataToMongoDB(
 
     String identifier = (await UniqueIdentifier.serial)!;
 
-    var uri = Uri.parse('http://192.168.150.208:3000/submit/');
+    var uri = Uri.parse('https://d28e-2409-4081-2c01-3dd6-6108-af72-1527-fda.ngrok-free.app/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['authorization'] = finalToken

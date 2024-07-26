@@ -47,7 +47,8 @@ class DatabaseServices {
   $_columnLatitudeName REAL,
   $_columnTimeStampName TEXT,
   $_columnSpeedName TEXT,
-  $_columnAltitudeName TEXT
+  $_columnAltitudeName TEXT,
+  synced INTEGER DEFAULT 0,
  )
 ''');
 
@@ -130,6 +131,55 @@ class DatabaseServices {
     }
 
     return surveysWithFiles;
+  }
+
+  Future<List<SurveyWithFiles>> getUnsyncedSurveyWithFiles() async {
+    final db = await database;
+    final surveyData = await db.query(
+      _tablesName,
+      where: 'synced = ?',
+      whereArgs: [0], // means not yet send to the mongoDB
+    );
+
+    List<SurveyWithFiles> surveyWithFiles = [];
+
+    for (var survey in surveyData) {
+      int surveyId = survey['id'] as int;
+      final fileData = await db.query(
+        _filesTablesName,
+        where: '$_columnSurveyIdName = ?',
+        whereArgs: [surveyId],
+      );
+
+      List<SurveyFileList> files = fileData
+          .map((e) => SurveyFileList(
+              id: e['id'] as int,
+              surveyId: e['survey_id'] as int,
+              filePath: e['file_path'] as String))
+          .toList();
+
+      SurveyList surveyItem = SurveyList(
+          id: survey['id'] as int,
+          description: survey['description'] as String,
+          longitude: survey['longitude'] as double,
+          latitude: survey['latitude'] as double,
+          timestamp: survey['timestamp'] as String,
+          speed: survey['speed'] as String,
+          altitude: survey['altitude'] as String);
+
+      surveyWithFiles.add(SurveyWithFiles(survey: surveyItem, files: files));
+    }
+
+    return surveyWithFiles;
+  }
+
+  Future<void> markSynced(int surveyId) async {
+    final db = await database;
+    await db.query(
+      _tablesName,
+      where: 'id = ?',
+      whereArgs: [surveyId],
+    );
   }
 
   Future<int> deleteSurvey(int id) async {
