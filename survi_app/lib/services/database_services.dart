@@ -18,6 +18,7 @@ class DatabaseServices {
   final String _columnAltitudeName = "altitude";
   final String _columnSurveyIdName = "survey_id";
   final String _columnFilePathName = "file_path";
+  final String _columnSendStatus = "send_status";
 
   DatabaseServices._constructor();
 
@@ -48,7 +49,7 @@ class DatabaseServices {
   $_columnTimeStampName TEXT,
   $_columnSpeedName TEXT,
   $_columnAltitudeName TEXT,
-  synced INTEGER DEFAULT 0,
+  $_columnSendStatus INTEGER DEFAULT 0
  )
 ''');
 
@@ -79,6 +80,7 @@ class DatabaseServices {
     List<SurveyList> surveyList = data
         .map((e) => SurveyList(
             id: e['id'] as int,
+            sendstatus: e['send_status'] as int,
             description: e['description'] as String,
             longitude: e['longitude'] as double,
             latitude: e['latitude'] as double,
@@ -120,12 +122,13 @@ class DatabaseServices {
 
       SurveyList surveyItem = SurveyList(
           id: surveyId,
+          sendstatus: survey['send_status'] as int,
           description: survey['description'] as String,
           longitude: survey['longitude'] as double,
           latitude: survey['latitude'] as double,
           timestamp: survey['timestamp'] as String,
           speed: survey['speed'] as String,
-          altitude: survey['altitude'] as String);
+          altitude: survey['altitude'] as String, );
 
       surveysWithFiles.add(SurveyWithFiles(survey: surveyItem, files: files));
     }
@@ -137,7 +140,7 @@ class DatabaseServices {
     final db = await database;
     final surveyData = await db.query(
       _tablesName,
-      where: 'synced = ?',
+      where: '$_columnSendStatus = ?',
       whereArgs: [0], // means not yet send to the mongoDB
     );
 
@@ -160,6 +163,7 @@ class DatabaseServices {
 
       SurveyList surveyItem = SurveyList(
           id: survey['id'] as int,
+          sendstatus: survey['send_status'] as int,
           description: survey['description'] as String,
           longitude: survey['longitude'] as double,
           latitude: survey['latitude'] as double,
@@ -175,8 +179,10 @@ class DatabaseServices {
 
   Future<void> markSynced(int surveyId) async {
     final db = await database;
-    await db.query(
-      _tablesName,
+    await db.update(
+      _tablesName,{
+            _columnSendStatus : 1
+      },
       where: 'id = ?',
       whereArgs: [surveyId],
     );

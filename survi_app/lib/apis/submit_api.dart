@@ -12,12 +12,20 @@ Future<void> pushDataToMongoDB(
   String description,
   List<File> files,
 ) async {
+   var assetYear = DateTime(2022, 12, 31);
   try {
     Map<String, dynamic> data = {
       "location": {"coordinates": coordinates, "altitude": altitude},
       "speed": speed,
       "time": time,
-      "surveyDescription": description
+      "remark": description,
+      "sub_department": "abc-sub Department",
+      "asset_owner": "abc asset-owner",
+      "asset_type": "abc asset-type",
+      "sub_type": "abc sub-type",
+      "asset_year": assetYear.toIso8601String(),
+      "asset_name": "abc asset-name",
+      "status": "abc status"
     };
 
     String jsonString = jsonEncode(data);
@@ -30,11 +38,13 @@ Future<void> pushDataToMongoDB(
 
     String identifier = (await UniqueIdentifier.serial)!;
 
-    var uri = Uri.parse('https://d28e-2409-4081-2c01-3dd6-6108-af72-1527-fda.ngrok-free.app/submit/');
+    var uri = Uri.parse(
+        'https://7566-2409-40c2-3045-2d45-8c3d-396d-17c0-3883.ngrok-free.app/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
+      ..headers['ngrok-skip-browser-warning'] = "69420"
       ..headers['authorization'] = finalToken
-      ..headers['deviceId'] = identifier;
+      ..headers['deviceid'] = identifier;
 
     List<Map<String, dynamic>> fileBytesList = [];
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:survi_app/functions/push_local_to_mongodb.dart';
 import 'package:survi_app/models/survey_file_list.dart';
 import 'package:survi_app/models/survey_list.dart';
 import 'package:survi_app/models/survey_with_files.dart';
@@ -16,6 +17,15 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                pushLocalDataToMongoDB();
+              },
+              icon: const Icon(Icons.send))
+        ],
+      ),
       body: _surveyLists(),
     );
   }
@@ -49,9 +59,7 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
                 return GestureDetector(
                   onLongPress: () {
                     DatabaseServices.instance.deleteSurvey(survey.id);
-                    setState(() {
-                      
-                    });
+                    setState(() {});
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -64,14 +72,17 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
                           height: 5,
                         ),
                         Text(
-                          'id : ${survey.id}\n description : ${survey.description}\n timeStamp: ${survey.timestamp}',
+                          'id : ${survey.id}\n description : ${survey.description}\n timeStamp: ${survey.timestamp} \n send_status : ${survey.sendstatus}',
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-
-                        const SizedBox(height: 8,),
-
-                        const Text('Files:',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),...files.map((file) => Text(file.filePath)).toList(),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text('Files:',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        ...files.map((file) => Text(file.filePath)).toList(),
                       ],
                     ),
                   ),

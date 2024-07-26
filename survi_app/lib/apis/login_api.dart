@@ -12,10 +12,11 @@ Future<void> loginUser(BuildContext context, String email, String password,
         {"email": email, "password": password, "deviceId": identifier});
     final headers = {
       'Content-Type': 'application/json',
+      "ngrok-skip-browser-warning": "69420",
     };
 
     http.Response response = await http.post(
-        Uri.parse('https://d28e-2409-4081-2c01-3dd6-6108-af72-1527-fda.ngrok-free.app/auth/login'),
+        Uri.parse('https://7566-2409-40c2-3045-2d45-8c3d-396d-17c0-3883.ngrok-free.app/auth/login'),
         headers: headers,
         body: body);
 
