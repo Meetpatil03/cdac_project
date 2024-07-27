@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/screens/home_page.dart';
-import 'package:survi_app/screens/login_page.dart';
+import 'package:survi_app/screens/onboarding_screens/onboarding_view.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -33,8 +33,9 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       print("No token found, navigating to SignUpScreen...");
       // Navigate to login screen if no token
+      
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => const OnBoardingScreen()),
       );
     }
   }
