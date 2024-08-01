@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:survi_app/screens/login_page.dart';
+import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/onboarding_screens/screen1.dart';
 import 'package:survi_app/screens/onboarding_screens/screen2.dart';
 import 'package:survi_app/screens/onboarding_screens/screen3.dart';

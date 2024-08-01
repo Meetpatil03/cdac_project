@@ -39,7 +39,7 @@ Future<void> pushDataToMongoDB(
     String identifier = (await UniqueIdentifier.serial)!;
 
     var uri = Uri.parse(
-        'https://7566-2409-40c2-3045-2d45-8c3d-396d-17c0-3883.ngrok-free.app/submit/');
+        'https://1f82-2409-4081-2e07-491e-99ae-45b2-bfd6-4321.ngrok-free.app/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['ngrok-skip-browser-warning'] = "69420"
@@ -75,7 +75,7 @@ Future<void> pushDataToMongoDB(
       print(' StatusCode : ${response.statusCode}');
     }
 
-    print('your to the end of api part');
+   
   } catch (e) {
     print(e.toString());
   }

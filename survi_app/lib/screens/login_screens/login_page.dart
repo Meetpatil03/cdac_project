@@ -47,8 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
 
     _initUniqueIdentifierState();
-
-    rootBundle
+    RiveFile.initialize().then((_) {
+       rootBundle
         .load('assets/rive/animated_login_character.riv')
         .then((byteData) {
       var riveFile = RiveFile.import(byteData);
@@ -63,17 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
         isHandsUp = _stateMachineController!.findSMI('isHandsUp');
         trigSuccess = _stateMachineController!.findSMI('trigSuccess');
         trigFail = _stateMachineController!.findSMI('trigFail');
-        look = _stateMachineController!.findInput<double>('numLook') as SMINumber;
+        look =
+            _stateMachineController!.findInput<double>('numLook') as SMINumber;
 
         setState(() {});
       }
     });
+    });
+
+   
   }
 
   Future<void> _initUniqueIdentifierState() async {
     String identifier = '';
     try {
       identifier = (await UniqueIdentifier.serial)!;
+      
     } catch (e) {
       print('identifier failed to get IEMI Number');
       print(e.toString());

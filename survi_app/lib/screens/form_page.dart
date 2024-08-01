@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -9,6 +10,7 @@ import 'package:survi_app/functions/push_data_sqlite.dart';
 import 'package:survi_app/screens/agents_survey_list.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
+
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -170,110 +172,114 @@ class _FormPageState extends State<FormPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(
-              controller: descriptionController,
-              label: 'Write description Here',
-              suffixIcons: const Icon(Icons.edit_calendar),
-              obscureText: false,
-              textInputType: TextInputType.text,
-              function: () {},
-              function2: () {},
-            ),
-            SizedBox(
-              height: size.height * 0.05,
-            ),
-            longitude == 0 && latitude == 0
-                ? const Text(
-                    'Fetching-Location.....',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Logitude : $longitude',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Latitude : $latitude',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'timeStamp : $time',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Speed : $speed',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
-            SizedBox(
-              height: size.height * 0.05,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                List<File> pickedFiles = await pickFiles(context);
-                setState(() {
-                  file = pickedFiles;
-                });
-              },
-              child: const Text('Upload files'),
-            ),
-            file.isNotEmpty
-                ? Column(
-                    children: file.map((file) {
-                      return Text(file.path.split('/').last);
-                    }).toList(),
-                  )
-                : Container(),
-            SizedBox(
-              height: size.height * 0.05,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                pushSurveyDataToDatabase();
-              },
-              child: const Text(
-                'Send',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomTextField(
+                controller: descriptionController,
+                label: 'Write description Here',
+                suffixIcons: const Icon(Icons.edit_calendar),
+                obscureText: false,
+                textInputType: TextInputType.text,
+                function: () {},
+                function2: () {},
               ),
-            ),
-            SizedBox(
-              height: size.height * 0.05,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AgentsSurveyList()));
-              },
-              child: const Text(
-                'Navigate to Survey List',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                height: size.height * 0.05,
               ),
-            ),
-          ],
+              longitude == 0 && latitude == 0
+                  ? const Text(
+                      'Fetching-Location.....',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Logitude : $longitude',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Latitude : $latitude',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'timeStamp : $time',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Speed : $speed',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+              SizedBox(
+                height: size.height * 0.05,
+              ),
+             
+              ElevatedButton(
+                onPressed: () async {
+                  List<File> pickedFiles = await pickFiles(context);
+                  setState(() {
+                    file = pickedFiles;
+                  });
+                },
+                child: const Text('Upload files'),
+              ),
+              file.isNotEmpty
+                  ? Column(
+                      children: file.map((file) {
+                        return Text(file.path.split('/').last);
+                      }).toList(),
+                    )
+                  : Container(),
+              SizedBox(
+                height: size.height * 0.05,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  pushSurveyDataToDatabase();
+                },
+                child: const Text(
+                  'Send',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.05,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AgentsSurveyList()));
+                },
+                child: const Text(
+                  'Navigate to Survey List',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

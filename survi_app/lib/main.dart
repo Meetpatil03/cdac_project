@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/splash_screen.dart';
 import 'package:survi_app/services/background_push_data_service.dart';
 import 'package:survi_app/services/log_services.dart';
@@ -29,10 +30,9 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme().copyWith(
             backgroundColor: const Color.fromRGBO(13, 16, 34, 1),
           )),
-      home: const SplashScreen(),
+      home:  const SplashScreen(),
     );
   }
 }
 
 
-// changes to be made again home : SplashScreen()

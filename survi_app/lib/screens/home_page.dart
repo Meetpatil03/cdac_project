@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/screens/form_page.dart';
-import 'package:survi_app/screens/login_page.dart';
+import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/read_log_screen.dart';
 
 class HomeScreen extends StatelessWidget {
