@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/functions/device_info.dart';
+import 'package:survi_app/functions/store_master_table.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/login_screens/reset_password_screen.dart';
 
@@ -39,6 +40,7 @@ Future<void> loginUser(BuildContext context, String email, String password,
       await prefs.setString('authToken', token);
       print('Old Token : $oldtoken');
       print('Updated Token : $token');
+       storeMasterTable(responseBody['department_name'],responseBody['owners_name'],responseBody['assets_types'],responseBody['assets_sub_types']);
       if (!passwordReset) {
         String role = responseBody['role'];
         String userId = responseBody['user_id'];
