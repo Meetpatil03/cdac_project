@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:survi_app/apis/submit_api.dart';
@@ -10,7 +11,7 @@ import 'package:survi_app/functions/push_data_sqlite.dart';
 import 'package:survi_app/screens/agents_survey_list.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
-
+import 'package:survi_app/widgets/drop_down_list.dart';
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -21,6 +22,7 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final TextEditingController descriptionController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
 
   bool hasInternetConnection = false;
   StreamSubscription? _internetConnectionStream;
@@ -33,6 +35,25 @@ class _FormPageState extends State<FormPage> {
   List<double> coordiantes = [];
   Position? currentPosition;
   List<File> file = [];
+  String? value1;
+  String? value2;
+  String? value3;
+  String? value4;
+  var regionItems = ["Mumbai", "Delhi", "Kolkata", "Chennai"];
+  var deptItems = ["Civil", "Mechanical", "Electicial"];
+  var assetsTypeItems = [
+    "Land",
+    "Building",
+    "Plant",
+    "Workshop",
+    "Machinery",
+    "Transformer",
+    "Generator",
+    "Pole",
+    "Transmissions",
+    "Lines"
+  ];
+  var entryTypeItems = ["Survey", "Maintenance"];
 
   @override
   void initState() {
@@ -162,6 +183,7 @@ class _FormPageState extends State<FormPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: const CustomText(
@@ -177,6 +199,45 @@ class _FormPageState extends State<FormPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(
+                height: 10,
+              ),
+              CustomDropDown(
+                value: value1,
+                items: regionItems,
+                onChanged: (value) => setState(() => value1 = value),
+                hint: 'Select Region',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: value2,
+                items: deptItems,
+                onChanged: (value) => setState(() => value2 = value),
+                hint: 'Choose Department',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: value3,
+                items: assetsTypeItems,
+                onChanged: (value) => setState(() => value3 = value),
+                hint: 'Select Asset-Type',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: value4,
+                items: entryTypeItems,
+                onChanged: (value) => setState(() => value4 = value),
+                hint: 'Select Entry-Type',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
               CustomTextField(
                 controller: descriptionController,
                 label: 'Write description Here',
@@ -189,10 +250,37 @@ class _FormPageState extends State<FormPage> {
               SizedBox(
                 height: size.height * 0.05,
               ),
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(width: 5, color: Colors.blue),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  hintText: "Tap to Select Date",
+                ),
+                onTap: () async {
+ FocusScope.of(context).requestFocus(FocusNode());  // To dismiss the keyboard
+
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+
+                  if (pickedDate != null) {
+                    setState(() {
+                      dateController.text = "${pickedDate.toLocal()}".split(' ')[0];  // Format the date as needed
+                    });
+                  }
+                  
+                },
+              ),
               longitude == 0 && latitude == 0
                   ? const Text(
                       'Fetching-Location.....',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -234,7 +322,6 @@ class _FormPageState extends State<FormPage> {
               SizedBox(
                 height: size.height * 0.05,
               ),
-             
               ElevatedButton(
                 onPressed: () async {
                   List<File> pickedFiles = await pickFiles(context);
