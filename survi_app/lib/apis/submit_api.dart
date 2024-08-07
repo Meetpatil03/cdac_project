@@ -5,27 +5,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unique_identifier/unique_identifier.dart';
 
 Future<void> pushDataToMongoDB(
-  List<double> coordinates,
-  String altitude,
-  String speed,
-  String time,
-  String description,
-  List<File> files,
+  double longitude,double latitude,String altitude,String speed,String time,String remark,String subdepartment,String assetowner,String projectName,String assettype,String subtype,String assetyear,String assetname,String status,List<File> files
 ) async {
-   var assetYear = DateTime(2022, 12, 31);
+   
   try {
     Map<String, dynamic> data = {
-      "location": {"coordinates": coordinates, "altitude": altitude},
+      "location": {"coordinates": [longitude,latitude], "altitude": altitude},
       "speed": speed,
       "time": time,
-      "remark": description,
-      "sub_department": "abc-sub Department",
-      "asset_owner": "abc asset-owner",
-      "asset_type": "abc asset-type",
-      "sub_type": "abc sub-type",
-      "asset_year": assetYear.toIso8601String(),
-      "asset_name": "abc asset-name",
-      "status": "abc status"
+      "remark": remark,
+      "subdepartment": subdepartment,
+      "owner": assetowner,
+      "projectName": projectName,
+      "type": assettype,
+      "subtype": subtype,
+      "asset_year": assetyear,
+      "asset_name": assetname,
+      "status": status
     };
 
     String jsonString = jsonEncode(data);
@@ -39,7 +35,7 @@ Future<void> pushDataToMongoDB(
     String identifier = (await UniqueIdentifier.serial)!;
 
     var uri = Uri.parse(
-        'https://1f82-2409-4081-2e07-491e-99ae-45b2-bfd6-4321.ngrok-free.app/submit/');
+        'https://f811-2409-40c2-101a-6dfb-c099-36eb-2a49-3190.ngrok-free.app/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['ngrok-skip-browser-warning'] = "69420"

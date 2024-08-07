@@ -35,8 +35,7 @@ Future<void> pushLocalDataToMongoDB() async{
           List<File> files =
               surveyWithFiles.files.map((file) => File(file.filePath)).toList();
 
-          await pushDataToMongoDB([longitude, latitude], altitude, speed, timestamp,
-              description, files);
+        //  await pushDataToMongoDB();
 
           print(
               'Pushed Survey survey_Id :${surveyWithFiles.survey.id} Successfully');

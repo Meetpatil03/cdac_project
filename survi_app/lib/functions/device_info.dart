@@ -3,7 +3,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_device_imei/flutter_device_imei.dart';
-import 'package:geocoding/geocoding.dart';
+
 import 'package:geolocator/geolocator.dart';
 
 Future<String> getIMEINumber() async {
@@ -28,10 +28,9 @@ Future<Map<String, dynamic>> getDeviceInfo() async {
     deviceDetials = {
       'device': androidInfo.device,
       'model': androidInfo.model,
-      'id': androidInfo.id,
       'imei': await getIMEINumber(),
-      'location': await getLocation(),
       'time': await getTimeZone(),
+      'location': await getLocation(),
     };
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfoPlugin.iosInfo;
@@ -39,8 +38,9 @@ Future<Map<String, dynamic>> getDeviceInfo() async {
       'device': iosInfo.name,
       'model': iosInfo.model,
       'imei': 'IOS Doesn\'t  have IMEI Number',
-      'location': await getLocation(),
       'time': await getTimeZone(),
+      'location': await getLocation(),
+      
     };
   }
 
@@ -92,19 +92,24 @@ Future<Position?> getCurrentLocation() async {
   // return address;
 }
 
-Future<String> getLocation() async {
-  String location;
+Future<Map<String, dynamic>> getLocation() async {
+  Map<String, dynamic> location = {};
   final position = await getCurrentLocation();
 
-  List<Placemark> placemarks =
-      await placemarkFromCoordinates(position!.latitude, position.longitude);
+  // List<Placemark> placemarks =
+  //     await placemarkFromCoordinates(position!.latitude, position.longitude);
 
-  if (placemarks.isNotEmpty) {
-    Placemark place = placemarks[0];
-    location = "${place.locality}, ${place.country}";
-  } else {
-    location = "Sorry Fetching Error";
-  }
+  // if (placemarks.isNotEmpty) {
+  //   Placemark place = placemarks[0];
+  //   location = "${place.locality}, ${place.country}";
+  // } else {
+  //   location = "Sorry Fetching Error";
+  // }
+
+  location = {
+    "longitude": position!.longitude,
+    "latitude": position.latitude,
+  };
 
   return location;
 }

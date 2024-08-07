@@ -5,12 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/screens/home_page.dart';
 import 'package:unique_identifier/unique_identifier.dart';
 
-Future<void> resetPassword(String password, BuildContext context) async {
+Future<void> resetPassword(String password, BuildContext context,String token) async {
   Map<String, String> body = {'password': password};
 
   String jsonString = jsonEncode(body);
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('authToken');
+  // final prefs = await SharedPreferences.getInstance();
+  // final token = prefs.getString('authToken');
 
   String finalToken = "Token ";
   finalToken += token.toString();
@@ -19,7 +19,7 @@ Future<void> resetPassword(String password, BuildContext context) async {
   String deviceid = (await UniqueIdentifier.serial)!;
 
   var uri = Uri.parse(
-      'https://1f82-2409-4081-2e07-491e-99ae-45b2-bfd6-4321.ngrok-free.app/auth/update/resetPassword');
+      'https://f811-2409-40c2-101a-6dfb-c099-36eb-2a49-3190.ngrok-free.app/auth/update/resetPassword');
 
   var hearders = {
     'Content-Type': 'application/json',

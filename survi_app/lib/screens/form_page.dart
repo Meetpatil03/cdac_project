@@ -2,13 +2,18 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:survi_app/apis/submit_api.dart';
 import 'package:survi_app/functions/file_picker.dart';
 import 'package:survi_app/functions/push_data_sqlite.dart';
+import 'package:survi_app/models/assets_list.dart';
+import 'package:survi_app/models/assets_sub_type_list.dart';
+import 'package:survi_app/models/department_list.dart';
+import 'package:survi_app/models/owners_list.dart';
 import 'package:survi_app/screens/agents_survey_list.dart';
+import 'package:survi_app/services/fetch_master_table.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
 import 'package:survi_app/widgets/drop_down_list.dart';
@@ -22,7 +27,10 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController assetNameController = TextEditingController();
+  final TextEditingController projectNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  final FetchMasterTable _fetchMasterTable = FetchMasterTable.instance;
 
   bool hasInternetConnection = false;
   StreamSubscription? _internetConnectionStream;
@@ -36,11 +44,18 @@ class _FormPageState extends State<FormPage> {
   Position? currentPosition;
   List<File> file = [];
   String? value1;
-  String? value2;
-  String? value3;
-  String? value4;
+  String? deptValue;
+  String? ownersValue;
+  String? assetsValue;
+  String? assetsSubTypeValue;
+  String? statusValue;
   var regionItems = ["Mumbai", "Delhi", "Kolkata", "Chennai"];
-  var deptItems = ["Civil", "Mechanical", "Electicial"];
+  List<String> deptItems = [];
+  List<String> ownerItems = [];
+  List<String> assetItems = [];
+  List<String> assetSubTypeItems = [];
+  List<String> statusItems = ['Survey', "Maintenance"];
+
   var assetsTypeItems = [
     "Land",
     "Building",
@@ -53,6 +68,7 @@ class _FormPageState extends State<FormPage> {
     "Transmissions",
     "Lines"
   ];
+
   var entryTypeItems = ["Survey", "Maintenance"];
 
   @override
@@ -78,6 +94,8 @@ class _FormPageState extends State<FormPage> {
           });
       }
     });
+
+    fetchDeptMasterList();
   }
 
   void checkLocationServices() async {
@@ -150,7 +168,22 @@ class _FormPageState extends State<FormPage> {
     );
   }
 
-  Future<void> pushSurveyDataToDatabase() async {
+  Future<void> pushSurveyDataToDatabase(
+      double longitude,
+      double latitude,
+      String altitude,
+      String speed,
+      String time,
+      String remark,
+      String subdepartment,
+      String assetowner,
+      String projectName,
+      String assettype,
+      String subtype,
+      String assetyear,
+      String assetname,
+      String status,
+      List<File> file) async {
     bool hasInternet = await InternetConnection().hasInternetAccess;
     print("Checking Internet Connection : $hasInternet");
     print(hasInternetConnection);
@@ -160,8 +193,22 @@ class _FormPageState extends State<FormPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Online")));
 
-      pushDataToMongoDB(coordiantes, altitude, speed, time,
-          descriptionController.text.toString(), file);
+      pushDataToMongoDB(
+          longitude,
+          latitude,
+          altitude,
+          speed,
+          time,
+          remark,
+          subdepartment,
+          assetowner,
+          projectName,
+          assettype,
+          subtype,
+          assetyear,
+          assetname,
+          status,
+          file);
     } else if (!hasInternetConnection) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Offline")));
@@ -171,6 +218,20 @@ class _FormPageState extends State<FormPage> {
       pushDataToLocalStorage(descriptionController.text.toString(), longitude,
           latitude, time, speed, altitude, file);
     }
+  }
+
+  Future<void> fetchDeptMasterList() async {
+    List<Department>? departments = await _fetchMasterTable.getDepartmentList();
+    List<Owners>? owners = await _fetchMasterTable.getOwnersList();
+    List<AssetList>? assets = await _fetchMasterTable.getAssetList();
+    List<AssetsSubTypeList>? assetSubList =
+        await _fetchMasterTable.getAssetsSubTypeList();
+    setState(() {
+      deptItems = departments.map((e) => e.name).toList();
+      ownerItems = owners.map((e) => e.name).toList();
+      assetItems = assets.map((e) => e.geometry).toList();
+      assetSubTypeItems = assetSubList.map((e) => e.name).toList();
+    });
   }
 
   @override
@@ -202,6 +263,18 @@ class _FormPageState extends State<FormPage> {
               const SizedBox(
                 height: 10,
               ),
+              CustomTextField(
+                controller: projectNameController,
+                label: 'Enter Project-Name',
+                suffixIcons: const Icon(Icons.pending_actions),
+                obscureText: false,
+                textInputType: TextInputType.text,
+                function: () {},
+                function2: () {},
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
               CustomDropDown(
                 value: value1,
                 items: regionItems,
@@ -212,28 +285,100 @@ class _FormPageState extends State<FormPage> {
                 height: size.height * 0.025,
               ),
               CustomDropDown(
-                value: value2,
+                value: deptValue,
                 items: deptItems,
-                onChanged: (value) => setState(() => value2 = value),
+                onChanged: (value) => setState(() => deptValue = value),
                 hint: 'Choose Department',
               ),
               SizedBox(
                 height: size.height * 0.025,
               ),
               CustomDropDown(
-                value: value3,
-                items: assetsTypeItems,
-                onChanged: (value) => setState(() => value3 = value),
-                hint: 'Select Asset-Type',
+                value: ownersValue,
+                items: ownerItems,
+                onChanged: (value) => setState(() => ownersValue = value),
+                hint: 'Choose-owners-List',
               ),
               SizedBox(
                 height: size.height * 0.025,
               ),
               CustomDropDown(
-                value: value4,
-                items: entryTypeItems,
-                onChanged: (value) => setState(() => value4 = value),
-                hint: 'Select Entry-Type',
+                value: assetsValue,
+                items: assetItems,
+                onChanged: (value) => setState(() => assetsValue = value),
+                hint: 'Select Asset',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: assetsSubTypeValue,
+                items: assetSubTypeItems,
+                onChanged: (value) =>
+                    setState(() => assetsSubTypeValue = value),
+                hint: 'Choose-Assets SubType',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              TextField(
+                controller: dateController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 5, color: Colors.blue),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    hintText: "Tap to Select Date",
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 5.0),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 5.0),
+                      borderRadius: BorderRadius.circular(15),
+                    )),
+                onTap: () async {
+                  FocusScope.of(context)
+                      .requestFocus(FocusNode()); // To dismiss the keyboard
+
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+
+                  if (pickedDate != null) {
+                    setState(() {
+                      dateController.text = "${pickedDate.toLocal()}"
+                          .split(' ')[0]; // Format the date as needed
+                    });
+                  }
+                },
+              ),
+              SizedBox(
+                height: size.width * 0.025,
+              ),
+              CustomTextField(
+                controller: assetNameController,
+                label: 'Enter Assets-Name',
+                suffixIcons: const Icon(Icons.pending_actions),
+                obscureText: false,
+                textInputType: TextInputType.text,
+                function: () {},
+                function2: () {},
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: statusValue,
+                items: statusItems,
+                onChanged: (value) => setState(() => statusValue = value),
+                hint: 'Select Status of Work',
               ),
               SizedBox(
                 height: size.height * 0.025,
@@ -248,33 +393,7 @@ class _FormPageState extends State<FormPage> {
                 function2: () {},
               ),
               SizedBox(
-                height: size.height * 0.05,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 5, color: Colors.blue),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  hintText: "Tap to Select Date",
-                ),
-                onTap: () async {
- FocusScope.of(context).requestFocus(FocusNode());  // To dismiss the keyboard
-
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100),
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      dateController.text = "${pickedDate.toLocal()}".split(' ')[0];  // Format the date as needed
-                    });
-                  }
-                  
-                },
+                height: size.height * 0.025,
               ),
               longitude == 0 && latitude == 0
                   ? const Text(
@@ -343,7 +462,44 @@ class _FormPageState extends State<FormPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  pushSurveyDataToDatabase();
+                  if (longitude != 0 &&
+                      latitude != 0 &&
+                      altitude.isNotEmpty &&
+                      speed.isNotEmpty &&
+                      time.isNotEmpty &&
+                      descriptionController.text.isNotEmpty &&
+                      deptValue!.isNotEmpty &&
+                      ownersValue!.isNotEmpty &&
+                      projectNameController.text.isNotEmpty &&
+                      assetsValue!.isNotEmpty &&
+                      assetsSubTypeValue!.isNotEmpty &&
+                      dateController.text.isNotEmpty &&
+                      assetNameController.text.isNotEmpty &&
+                      statusValue!.isNotEmpty &&
+                      file.isNotEmpty) {
+                    pushSurveyDataToDatabase(
+                        longitude,
+                        latitude,
+                        altitude,
+                        speed,
+                        time,
+                        descriptionController.text.toString(),
+                        deptValue!,
+                        ownersValue!,
+                        projectNameController.text.toString(),
+                        assetsValue!,
+                        assetsSubTypeValue!,
+                        dateController.text.toString(),
+                        assetNameController.text.toString(),
+                        statusValue!,
+                        file);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Some of the Field is Empty"),
+                      ),
+                    );
+                  }
                 },
                 child: const Text(
                   'Send',

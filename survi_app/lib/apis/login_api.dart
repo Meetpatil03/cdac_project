@@ -12,18 +12,20 @@ Future<void> loginUser(BuildContext context, String email, String password,
     String identifier) async {
   try {
     final deviceDetials = await getDeviceInfo();
-    final body = jsonEncode(
-        {"email": email, "password": password, "deviceId": identifier,"deviceDetials":deviceDetials});
+    final body = jsonEncode({
+      "email": email,
+      "password": password,
+      "deviceId": identifier,
+      "deviceDetails": deviceDetials
+    });
     final headers = {
       'Content-Type': 'application/json',
       "ngrok-skip-browser-warning": "69420",
     };
 
-    
-
     http.Response response = await http.post(
         Uri.parse(
-            'https://1f82-2409-4081-2e07-491e-99ae-45b2-bfd6-4321.ngrok-free.app/auth/login'),
+            'https://f811-2409-40c2-101a-6dfb-c099-36eb-2a49-3190.ngrok-free.app/auth/login'),
         headers: headers,
         body: body);
 
@@ -35,17 +37,28 @@ Future<void> loginUser(BuildContext context, String email, String password,
       bool passwordReset = responseBody['password_reset'];
 
       // updating the existing token
-      final prefs = await SharedPreferences.getInstance();
+      // final prefs = await SharedPreferences.getInstance();
+      // final oldtoken = prefs.getString('authToken');
+      // await prefs.setString('authToken', token);
+      // print('Old Token : $oldtoken');
+      // print('Updated Token : $token');
+      storeMasterTable(
+        responseBody['department_name'],
+        responseBody['owners_name'],
+        responseBody['assets_types'],
+        responseBody['assets_sub_types'],
+      );
+      if (!passwordReset) {
+         
+        String role = responseBody['role'];
+        String userId = responseBody['user_id'];
+        tellUserToResetPassword(context, role, userId,token);
+      } else {
+         final prefs = await SharedPreferences.getInstance();
       final oldtoken = prefs.getString('authToken');
       await prefs.setString('authToken', token);
       print('Old Token : $oldtoken');
       print('Updated Token : $token');
-       storeMasterTable(responseBody['department_name'],responseBody['owners_name'],responseBody['assets_types'],responseBody['assets_sub_types']);
-      if (!passwordReset) {
-        String role = responseBody['role'];
-        String userId = responseBody['user_id'];
-        tellUserToResetPassword(context, role, userId);
-      } else {
         pushUsertoHome(context);
       }
     } else {
@@ -57,12 +70,12 @@ Future<void> loginUser(BuildContext context, String email, String password,
   }
 }
 
-void tellUserToResetPassword(BuildContext context, String role, String userId) {
+void tellUserToResetPassword(BuildContext context, String role, String userId,String token) {
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
       builder: (context) => ResetPassword(
         role: role,
-        userId: userId,
+        userId: userId, token: token,
       ),
     ),
   );

@@ -8,7 +8,8 @@ import 'package:survi_app/widgets/custom_text_field.dart';
 class ResetPassword extends StatefulWidget {
   final String role;
   final String userId;
-  const ResetPassword({super.key, required this.role, required this.userId});
+  final String token;
+  const ResetPassword({super.key, required this.role, required this.userId,required this.token});
 
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
@@ -110,11 +111,11 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            clicked!.fire;
-                            
-                            if (p1Controller.text == p2Controller.text) {
+                          
+
+                            if (p1Controller.text.isNotEmpty && p2Controller.text.isNotEmpty &&  p1Controller.text == p2Controller.text) {
                               resetPassword(
-                                  p1Controller.text.toString(), context);
+                                  p1Controller.text.toString(), context,widget.token);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -139,7 +140,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     ),
                   ),
                 )
-              : const CircularProgressIndicator.adaptive()),
+              : const CircularProgressIndicator.adaptive(),),
     );
   }
 }
