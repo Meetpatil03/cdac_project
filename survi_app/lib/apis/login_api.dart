@@ -43,10 +43,11 @@ Future<void> loginUser(BuildContext context, String email, String password,
       // print('Old Token : $oldtoken');
       // print('Updated Token : $token');
       storeMasterTable(
+        responseBody['regions'],
         responseBody['department_name'],
         responseBody['owners_name'],
         responseBody['assets_types'],
-        responseBody['assets_sub_types'],
+        responseBody['assets_sub_types']
       );
       if (!passwordReset) {
          

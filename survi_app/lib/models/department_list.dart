@@ -1,7 +1,7 @@
 class Department {
   final int id;
-  final String name;
-  final String description;
+  final String departmentName;
+  final String referenceTable;
 
-  Department({required this.id,required this.name, required this.description});
+  Department({required this.id,required this.departmentName, required this.referenceTable});
 }

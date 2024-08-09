@@ -227,10 +227,10 @@ class _FormPageState extends State<FormPage> {
     List<AssetsSubTypeList>? assetSubList =
         await _fetchMasterTable.getAssetsSubTypeList();
     setState(() {
-      deptItems = departments.map((e) => e.name).toList();
-      ownerItems = owners.map((e) => e.name).toList();
-      assetItems = assets.map((e) => e.geometry).toList();
-      assetSubTypeItems = assetSubList.map((e) => e.name).toList();
+      deptItems = departments.map((e) => e.departmentName).toList();
+      ownerItems = owners.map((e) => e.ownerName).toList();
+      assetItems = assets.map((e) => e.assetsName).toList();
+      assetSubTypeItems = assetSubList.map((e) => e.assetsSubTypeName).toList();
     });
   }
 

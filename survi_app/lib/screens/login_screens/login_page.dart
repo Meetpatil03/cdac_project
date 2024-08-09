@@ -99,7 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
         scrollDirection: Axis.vertical,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+           
             mainArtBoard != null
                 ? SizedBox(
                     height: 300,
@@ -108,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       artboard: mainArtBoard!,
                     ))
                 : Container(),
-            const CustomText(fontSize: 50, text: 'Login'),
+            const CustomText(fontSize: 80, text: 'Login'),
             SizedBox(
               height: size.height * 0.05,
             ),

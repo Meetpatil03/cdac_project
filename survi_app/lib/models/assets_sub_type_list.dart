@@ -1,9 +1,12 @@
-
-class AssetsSubTypeList{
+class AssetsSubTypeList {
   final int id;
-  final String name;
+  final String assetsSubTypeName;
+  final String reference;
   final String description;
 
-  AssetsSubTypeList({required this.id, required this.name, required this.description});
+  AssetsSubTypeList(
+      {required this.id,
+        required this.assetsSubTypeName,
+      required this.reference,
+      required this.description});
 }
-

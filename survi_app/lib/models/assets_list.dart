@@ -1,8 +1,7 @@
 class AssetList {
   final int id;
-  final String name;
-  final String description;
-  final String geometry;
+  final String assetsName;
+  final String reference;
 
-  AssetList({required this.id, required this.name, required this.description, required this.geometry});
+  AssetList( {required this.id,required this.assetsName, required this.reference});
 }

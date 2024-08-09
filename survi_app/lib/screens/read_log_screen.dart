@@ -45,8 +45,8 @@ class ReadLogs extends StatelessWidget {
                   (context, index) {
                     final dept = departmentlist[index];
                     return ListTile(
-                      title: Text(dept.name),
-                      subtitle: Text(dept.description),
+                      title: Text(dept.departmentName),
+                      subtitle: Text(dept.referenceTable),
                     );
                   },
                   childCount: departmentlist.length,
@@ -58,8 +58,8 @@ class ReadLogs extends StatelessWidget {
                   (context, index) {
                     final owner = ownerslist[index];
                     return ListTile(
-                      title: Text(owner.name),
-                      subtitle: Text(owner.description),
+                      title: Text(owner.ownerName),
+                      subtitle: Text(owner.reference),
                     );
                   },
                   childCount: ownerslist.length,
@@ -71,8 +71,8 @@ class ReadLogs extends StatelessWidget {
                   (context, index) {
                     final asset = assetslist[index];
                     return ListTile(
-                      title: Text(asset.name),
-                      subtitle: Text(asset.geometry),
+                      title: Text(asset.assetsName),
+                      subtitle: Text(asset.reference),
                     );
                   },
                   childCount: assetslist.length,
@@ -84,8 +84,8 @@ class ReadLogs extends StatelessWidget {
                   (context, index) {
                     final assetsubtype = assetsubtypelist[index];
                     return ListTile(
-                      title: Text(assetsubtype.name),
-                      subtitle: Text(assetsubtype.description),
+                      title: Text(assetsubtype.assetsSubTypeName),
+                      subtitle: Text(assetsubtype.reference),
                     );
                   },
                   childCount: assetsubtypelist.length,

@@ -1,8 +1,9 @@
 class Owners {
   final int id;
-  final String name;
-  final String description;
+  final String ownerName;
+  final String reference;
 
-  Owners({required this.id, required this.name, required this.description});
-
+  Owners({
+    required this.id,
+    required this.ownerName, required this.reference});
 }
