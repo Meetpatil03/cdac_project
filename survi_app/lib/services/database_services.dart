@@ -10,12 +10,21 @@ class DatabaseServices {
 
   final String _tablesName = "surveys";
   final String _filesTablesName = "files";
-  final String _columnDescriptionName = "description";
+  final String _columnRegionName = "regions";
+  final String _columnDescriptionName = "remark";
   final String _columnLongitudeName = "longitude";
   final String _columnLatitudeName = "latitude";
   final String _columnTimeStampName = "timestamp";
   final String _columnSpeedName = "speed";
   final String _columnAltitudeName = "altitude";
+  final String _columnSubDepartmentName = "subdepartment";
+  final String _columnAssetOwnerName = "assetowner";
+  final String _columnProjectName = "projectName";
+  final String _columnAssetTypeName = "assettype";
+  final String _columnSubTypeName = "subtype";
+  final String _columnAssetYearName = "assetyear";
+  final String _columnAssetName = "assetname";
+  final String _columnPurposeName = "purpose";
   final String _columnSurveyIdName = "survey_id";
   final String _columnFilePathName = "file_path";
   final String _columnSendStatus = "send_status";
@@ -43,12 +52,21 @@ class DatabaseServices {
     await db.execute('''
  CREATE TABLE $_tablesName(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  $_columnRegionName TEXT,
   $_columnDescriptionName TEXT,
   $_columnLongitudeName REAL,
   $_columnLatitudeName REAL,
   $_columnTimeStampName TEXT,
   $_columnSpeedName TEXT,
   $_columnAltitudeName TEXT,
+  $_columnSubDepartmentName TEXT,
+  $_columnAssetOwnerName TEXT,
+  $_columnProjectName TEXT,
+  $_columnAssetTypeName TEXT,
+  $_columnSubTypeName TEXT,
+  $_columnAssetYearName TEXT,
+  $_columnAssetName TEXT,
+  $_columnPurposeName TEXT,
   $_columnSendStatus INTEGER DEFAULT 0
  )
 ''');
@@ -79,14 +97,24 @@ class DatabaseServices {
     final data = await db.query(_tablesName);
     List<SurveyList> surveyList = data
         .map((e) => SurveyList(
-            id: e['id'] as int,
-            sendstatus: e['send_status'] as int,
-            description: e['description'] as String,
-            longitude: e['longitude'] as double,
-            latitude: e['latitude'] as double,
-            timestamp: e['timestamp'] as String,
-            speed: e['speed'] as String,
-            altitude: e['altitude'] as String))
+              id: e['id'] as int,
+              sendstatus: e[_columnSendStatus] as int,
+              description: e[_columnDescriptionName] as String,
+              longitude: e[_columnLongitudeName] as double,
+              latitude: e[_columnLatitudeName] as double,
+              timestamp: e[_columnTimeStampName] as String,
+              speed: e[_columnSpeedName] as String,
+              altitude: e[_columnAltitudeName] as String,
+              subdepartment: e[_columnSubDepartmentName] as String,
+              assetowner: e[_columnAssetOwnerName] as String,
+              projectName: e[_columnProjectName] as String,
+              assettype: e[_columnAssetTypeName] as String,
+              subtype: e[_columnSubTypeName] as String,
+              assetyear: e[_columnAssetYearName] as String,
+              assetname: e[_columnAssetName] as String,
+              purpose: e[_columnPurposeName] as String,
+              region: e[_columnRegionName] as String,
+            ))
         .toList();
 
     return surveyList;
@@ -121,14 +149,24 @@ class DatabaseServices {
           .toList();
 
       SurveyList surveyItem = SurveyList(
-          id: surveyId,
-          sendstatus: survey['send_status'] as int,
-          description: survey['description'] as String,
-          longitude: survey['longitude'] as double,
-          latitude: survey['latitude'] as double,
-          timestamp: survey['timestamp'] as String,
-          speed: survey['speed'] as String,
-          altitude: survey['altitude'] as String, );
+        id: surveyId,
+        sendstatus: survey[_columnSendStatus] as int,
+        description: survey[_columnDescriptionName] as String,
+        longitude: survey[_columnLongitudeName] as double,
+        latitude: survey[_columnLatitudeName] as double,
+        timestamp: survey[_columnTimeStampName] as String,
+        speed: survey[_columnSpeedName] as String,
+        altitude: survey[_columnAltitudeName] as String,
+        subdepartment: survey[_columnSubDepartmentName] as String,
+        assetowner: survey[_columnAssetOwnerName] as String,
+        projectName: survey[_columnProjectName] as String,
+        assettype: survey[_columnAssetTypeName] as String,
+        subtype: survey[_columnSubTypeName] as String,
+        assetyear: survey[_columnAssetYearName] as String,
+        assetname: survey[_columnAssetName] as String,
+        purpose: survey[_columnPurposeName] as String,
+        region: survey[_columnRegionName] as String,
+      );
 
       surveysWithFiles.add(SurveyWithFiles(survey: surveyItem, files: files));
     }
@@ -162,14 +200,24 @@ class DatabaseServices {
           .toList();
 
       SurveyList surveyItem = SurveyList(
-          id: survey['id'] as int,
-          sendstatus: survey['send_status'] as int,
-          description: survey['description'] as String,
-          longitude: survey['longitude'] as double,
-          latitude: survey['latitude'] as double,
-          timestamp: survey['timestamp'] as String,
-          speed: survey['speed'] as String,
-          altitude: survey['altitude'] as String);
+        id: survey['id'] as int,
+        sendstatus: survey[_columnSendStatus] as int,
+        description: survey[_columnDescriptionName] as String,
+        longitude: survey[_columnLongitudeName] as double,
+        latitude: survey[_columnAltitudeName] as double,
+        timestamp: survey[_columnTimeStampName] as String,
+        speed: survey[_columnSpeedName] as String,
+        altitude: survey[_columnAltitudeName] as String,
+        subdepartment: survey[_columnSubDepartmentName] as String,
+        assetowner: survey[_columnAssetOwnerName] as String,
+        projectName: survey[_columnProjectName] as String,
+        assettype: survey[_columnAssetTypeName] as String,
+        subtype: survey[_columnSubTypeName] as String,
+        assetyear: survey[_columnAssetYearName] as String,
+        assetname: survey[_columnAssetName] as String,
+        purpose: survey[_columnPurposeName] as String,
+        region: survey[_columnRegionName] as String,
+      );
 
       surveyWithFiles.add(SurveyWithFiles(survey: surveyItem, files: files));
     }
@@ -180,9 +228,8 @@ class DatabaseServices {
   Future<void> markSynced(int surveyId) async {
     final db = await database;
     await db.update(
-      _tablesName,{
-            _columnSendStatus : 1
-      },
+      _tablesName,
+      {_columnSendStatus: 1},
       where: 'id = ?',
       whereArgs: [surveyId],
     );

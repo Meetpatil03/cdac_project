@@ -2,25 +2,27 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:unique_identifier/unique_identifier.dart';
 
 Future<void> pushDataToMongoDB(
+  String region,
   double longitude,double latitude,String altitude,String speed,String time,String remark,String subdepartment,String assetowner,String projectName,String assettype,String subtype,String assetyear,String assetname,String status,List<File> files
 ) async {
    
   try {
     Map<String, dynamic> data = {
-      "location": {"coordinates": [longitude,latitude], "altitude": altitude},
-      "speed": speed,
-      "time": time,
-      "remark": remark,
-      "subdepartment": subdepartment,
+      "region": region,
+      "location": {"coordinates": [longitude,latitude], "altitude": altitude,"speed":speed,"time":time},
+      "description": remark,
+      "department": subdepartment,
       "owner": assetowner,
       "projectName": projectName,
-      "type": assettype,
-      "subtype": subtype,
-      "asset_year": assetyear,
-      "asset_name": assetname,
+      "assetType": assettype,
+      // "subtype": subtype,
+      "schemeComponent": "the form is uploaded from mobile",
+      "year": assetyear,
+      "assets": assetname,
       "status": status
     };
 
@@ -35,7 +37,7 @@ Future<void> pushDataToMongoDB(
     String identifier = (await UniqueIdentifier.serial)!;
 
     var uri = Uri.parse(
-        'https://f811-2409-40c2-101a-6dfb-c099-36eb-2a49-3190.ngrok-free.app/submit/');
+        'https://3887-2409-4081-1e81-d68-5432-7a86-8e9-938a.ngrok-free.app/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['ngrok-skip-browser-warning'] = "69420"

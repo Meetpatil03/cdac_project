@@ -12,6 +12,7 @@ import 'package:survi_app/models/assets_list.dart';
 import 'package:survi_app/models/assets_sub_type_list.dart';
 import 'package:survi_app/models/department_list.dart';
 import 'package:survi_app/models/owners_list.dart';
+import 'package:survi_app/models/regions_list.dart';
 import 'package:survi_app/screens/agents_survey_list.dart';
 import 'package:survi_app/services/fetch_master_table.dart';
 import 'package:survi_app/widgets/custom_text.dart';
@@ -49,7 +50,8 @@ class _FormPageState extends State<FormPage> {
   String? assetsValue;
   String? assetsSubTypeValue;
   String? statusValue;
-  var regionItems = ["Mumbai", "Delhi", "Kolkata", "Chennai"];
+  String? regionsValue;
+  List<String> regionsItems = [];
   List<String> deptItems = [];
   List<String> ownerItems = [];
   List<String> assetItems = [];
@@ -169,6 +171,7 @@ class _FormPageState extends State<FormPage> {
   }
 
   Future<void> pushSurveyDataToDatabase(
+      String regionValue,
       double longitude,
       double latitude,
       String altitude,
@@ -194,6 +197,7 @@ class _FormPageState extends State<FormPage> {
           .showSnackBar(const SnackBar(content: Text("Online")));
 
       pushDataToMongoDB(
+        regionValue,
           longitude,
           latitude,
           altitude,
@@ -215,18 +219,35 @@ class _FormPageState extends State<FormPage> {
 
       //
 
-      pushDataToLocalStorage(descriptionController.text.toString(), longitude,
-          latitude, time, speed, altitude, file);
+      pushDataToLocalStorage(
+          regionValue,
+          longitude,
+          latitude,
+          altitude,
+          speed,
+          time,
+          remark,
+          subdepartment,
+          assetowner,
+          projectName,
+          assettype,
+          subtype,
+          assetyear,
+          assetname,
+          status,
+          file);
     }
   }
 
   Future<void> fetchDeptMasterList() async {
+    List<RegionsList> regions = await _fetchMasterTable.getRegionsList();
     List<Department>? departments = await _fetchMasterTable.getDepartmentList();
     List<Owners>? owners = await _fetchMasterTable.getOwnersList();
     List<AssetList>? assets = await _fetchMasterTable.getAssetList();
     List<AssetsSubTypeList>? assetSubList =
         await _fetchMasterTable.getAssetsSubTypeList();
     setState(() {
+      regionsItems = regions.map((e) => e.regionsName).toList();
       deptItems = departments.map((e) => e.departmentName).toList();
       ownerItems = owners.map((e) => e.ownerName).toList();
       assetItems = assets.map((e) => e.assetsName).toList();
@@ -276,9 +297,9 @@ class _FormPageState extends State<FormPage> {
                 height: size.height * 0.025,
               ),
               CustomDropDown(
-                value: value1,
-                items: regionItems,
-                onChanged: (value) => setState(() => value1 = value),
+                value: regionsValue,
+                items: regionsItems,
+                onChanged: (value) => setState(() => regionsValue = value),
                 hint: 'Select Region',
               ),
               SizedBox(
@@ -462,22 +483,24 @@ class _FormPageState extends State<FormPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (longitude != 0 &&
+                  if ((regionsValue?.isNotEmpty ?? false) &&
+                      longitude != 0 &&
                       latitude != 0 &&
                       altitude.isNotEmpty &&
                       speed.isNotEmpty &&
                       time.isNotEmpty &&
                       descriptionController.text.isNotEmpty &&
-                      deptValue!.isNotEmpty &&
-                      ownersValue!.isNotEmpty &&
+                      (deptValue?.isNotEmpty ?? false) &&
+                      (ownersValue?.isNotEmpty ?? false) &&
                       projectNameController.text.isNotEmpty &&
-                      assetsValue!.isNotEmpty &&
-                      assetsSubTypeValue!.isNotEmpty &&
+                      (assetsValue?.isNotEmpty ?? false) &&
+                      (assetsSubTypeValue?.isNotEmpty ?? false) &&
                       dateController.text.isNotEmpty &&
                       assetNameController.text.isNotEmpty &&
                       statusValue!.isNotEmpty &&
                       file.isNotEmpty) {
                     pushSurveyDataToDatabase(
+                        regionsValue!,
                         longitude,
                         latitude,
                         altitude,
@@ -499,6 +522,9 @@ class _FormPageState extends State<FormPage> {
                         content: Text("Some of the Field is Empty"),
                       ),
                     );
+
+                    print(
+                        " Regions : $regionsValue \n longitude : $longitude \n latitude : $latitude \n altitude : $altitude \n speed : $speed \n time : $time \n description : ${descriptionController.text.toString()} \n deptValue : $deptValue \n ownerValue : $ownersValue \n projectName : ${projectNameController.text.toString()} \n assetsValue : $assetsValue \n assetSubTypeName : $assetsSubTypeValue \n date : ${dateController.text.toString()} \n assetName : ${assetNameController.text.toString()} \n statusValue : $statusValue \n file : $file");
                   }
                 },
                 child: const Text(

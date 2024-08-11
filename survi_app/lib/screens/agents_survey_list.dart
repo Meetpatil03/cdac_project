@@ -72,7 +72,7 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
                           height: 5,
                         ),
                         Text(
-                          'id : ${survey.id}\n description : ${survey.description}\n timeStamp: ${survey.timestamp} \n send_status : ${survey.sendstatus}',
+                          'id : ${survey.id}\n description : ${survey.description}\n timeStamp: ${survey.timestamp} \n send_status : ${survey.sendstatus} \n purpose : ${survey.purpose}',
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),

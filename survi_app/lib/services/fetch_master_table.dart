@@ -2,6 +2,7 @@ import 'package:survi_app/models/assets_list.dart';
 import 'package:survi_app/models/assets_sub_type_list.dart';
 import 'package:survi_app/models/department_list.dart';
 import 'package:survi_app/models/owners_list.dart';
+import 'package:survi_app/models/regions_list.dart';
 import 'package:survi_app/services/master_database_service.dart';
 
 class FetchMasterTable {
@@ -12,12 +13,18 @@ class FetchMasterTable {
   final MasterDatabaseService _masterDatabaseService =
       MasterDatabaseService.instance;
 
+  static List<RegionsList>? _regionsList;
   static List<Department>? _deptList;
   static List<Owners>? _ownerList;
   static List<AssetList>? _assetList;
   static List<AssetsSubTypeList>? _assetsSubTypeList;
 
   FetchMasterTable._constructor();
+
+  Future<List<RegionsList>> getRegionsList() async {
+    _regionsList = await _masterDatabaseService.getRegionsList();
+    return _regionsList!;
+  }
 
   Future<List<Department>> getDepartmentList() async {
     _deptList = await _masterDatabaseService.getDeparmentLists();

@@ -4,15 +4,39 @@ import 'package:survi_app/services/database_services.dart';
 
 final DatabaseServices databaseServices = DatabaseServices.instance;
 
-Future<void> pushDataToLocalStorage(String description, double longitude,
-    double latitude, String time, String speed, String altitude,List<File> files) async {
+Future<void> pushDataToLocalStorage(
+  String region,
+  double longitude,
+      double latitude,
+      String altitude,
+      String speed,
+      String time,
+      String remark,
+      String subdepartment,
+      String assetowner,
+      String projectName,
+      String assettype,
+      String subtype,
+      String assetyear,
+      String assetname,
+      String status,
+      List<File> files) async {
   Map<String, dynamic> surveyData = {
-    'description': description,
+    'regions': region,
+    'remark': remark,
     'longitude': longitude,
     'latitude': latitude,
     'timestamp': time,
     'speed': speed,
     'altitude': altitude,
+    'subdepartment': subdepartment,
+    'assetowner': assetowner,
+    'projectName': projectName,
+    'assettype': assettype,
+    'subtype': subtype,
+    'assetyear': assetyear,
+    'assetname': assetname,
+    'purpose': status,
   };
 
   int surveyId = await databaseServices.insertSurvey(surveyData);
