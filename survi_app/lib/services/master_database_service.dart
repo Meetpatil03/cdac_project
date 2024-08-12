@@ -141,9 +141,9 @@ class MasterDatabaseService {
     return regionsList;
   }
 
-  Future<List<Department>> getDeparmentLists() async {
+  Future<List<Department>> getDeparmentLists(String owner) async {
     final db = await getDatabase();
-    final data = await db.query(_deparmentsTable);
+    final data = await db.query(_deparmentsTable,where: '$_deptColumnRefernce = ?',whereArgs: [owner]);
 
     List<Department> departmentlist = data
         .map((e) => Department(
@@ -157,9 +157,9 @@ class MasterDatabaseService {
     return departmentlist;
   }
 
-  Future<List<Owners>> getOwnersList() async {
+  Future<List<Owners>> getOwnersList(String region) async {
     final db = await getDatabase();
-    final data = await db.query(_ownersTable);
+    final data = await db.query(_ownersTable,where: '$_ownersColumnReference = ?',whereArgs: [region]);
 
     List<Owners> ownerslist = data
         .map((e) => Owners(
@@ -173,9 +173,9 @@ class MasterDatabaseService {
     return ownerslist;
   }
 
-  Future<List<AssetList>> getAssetsList() async {
+  Future<List<AssetList>> getAssetsList(String department) async {
     final db = await getDatabase();
-    final data = await db.query(_assetsTable);
+    final data = await db.query(_assetsTable,where: '$_assetsColumnReference = ?',whereArgs: [department]);
 
     List<AssetList> assetslist = data
         .map((e) => AssetList(
@@ -189,9 +189,9 @@ class MasterDatabaseService {
     return assetslist;
   }
 
-  Future<List<AssetsSubTypeList>> getAssetsSubTypeList() async {
+  Future<List<AssetsSubTypeList>> getAssetsSubTypeList(String asset) async {
     final db = await getDatabase();
-    final data = await db.query(_assetsSubTypeTable);
+    final data = await db.query(_assetsSubTypeTable,where: '$_assetSubTypeColumnReference = ?',whereArgs: [asset]);
 
     List<AssetsSubTypeList> assetsubtypelist = data
         .map((e) => AssetsSubTypeList(

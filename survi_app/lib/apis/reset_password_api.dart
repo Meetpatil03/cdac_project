@@ -21,7 +21,7 @@ Future<void> resetPassword(String password, BuildContext context,String token) a
   String deviceid = (await UniqueIdentifier.serial)!;
 
   var uri = Uri.parse(
-      'https://3887-2409-4081-1e81-d68-5432-7a86-8e9-938a.ngrok-free.app/auth/update/resetPassword');
+      'http://192.168.106.10:3000/auth/update/resetPassword');
 
   var hearders = {
     'Content-Type': 'application/json',

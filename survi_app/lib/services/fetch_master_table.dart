@@ -26,23 +26,23 @@ class FetchMasterTable {
     return _regionsList!;
   }
 
-  Future<List<Department>> getDepartmentList() async {
-    _deptList = await _masterDatabaseService.getDeparmentLists();
+  Future<List<Department>> getDepartmentList(String owner) async {
+    _deptList = await _masterDatabaseService.getDeparmentLists(owner);
     return _deptList!;
   }
 
-  Future<List<Owners>> getOwnersList() async {
-    _ownerList = await _masterDatabaseService.getOwnersList();
+  Future<List<Owners>> getOwnersList(String region) async {
+    _ownerList = await _masterDatabaseService.getOwnersList(region);
     return _ownerList!;
   }
 
-  Future<List<AssetList>> getAssetList() async {
-    _assetList = await _masterDatabaseService.getAssetsList();
+  Future<List<AssetList>> getAssetList(String department) async {
+    _assetList = await _masterDatabaseService.getAssetsList(department);
     return _assetList!;
   }
 
-  Future<List<AssetsSubTypeList>> getAssetsSubTypeList() async {
-    _assetsSubTypeList = await _masterDatabaseService.getAssetsSubTypeList();
+  Future<List<AssetsSubTypeList>> getAssetsSubTypeList(String asset) async {
+    _assetsSubTypeList = await _masterDatabaseService.getAssetsSubTypeList(asset);
     return _assetsSubTypeList!;
   }
 }

@@ -37,7 +37,7 @@ Future<void> pushDataToMongoDB(
     String identifier = (await UniqueIdentifier.serial)!;
 
     var uri = Uri.parse(
-        'https://3887-2409-4081-1e81-d68-5432-7a86-8e9-938a.ngrok-free.app/submit/');
+        'http://192.168.106.10:3000/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['ngrok-skip-browser-warning'] = "69420"

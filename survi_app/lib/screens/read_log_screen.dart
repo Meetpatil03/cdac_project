@@ -20,10 +20,10 @@ class ReadLogs extends StatelessWidget {
       ),
       body: FutureBuilder(
         future: Future.wait([
-          _masterDatabaseService.getDeparmentLists(),
-          _masterDatabaseService.getOwnersList(),
-          _masterDatabaseService.getAssetsList(),
-          _masterDatabaseService.getAssetsSubTypeList()
+          _masterDatabaseService.getDeparmentLists("Government"),
+          _masterDatabaseService.getOwnersList("North America"),
+          _masterDatabaseService.getAssetsList("Finance"),
+          _masterDatabaseService.getAssetsSubTypeList("Building")
         ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

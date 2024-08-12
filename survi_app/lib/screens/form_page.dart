@@ -197,7 +197,7 @@ class _FormPageState extends State<FormPage> {
           .showSnackBar(const SnackBar(content: Text("Online")));
 
       pushDataToMongoDB(
-        regionValue,
+          regionValue,
           longitude,
           latitude,
           altitude,
@@ -241,17 +241,12 @@ class _FormPageState extends State<FormPage> {
 
   Future<void> fetchDeptMasterList() async {
     List<RegionsList> regions = await _fetchMasterTable.getRegionsList();
-    List<Department>? departments = await _fetchMasterTable.getDepartmentList();
-    List<Owners>? owners = await _fetchMasterTable.getOwnersList();
-    List<AssetList>? assets = await _fetchMasterTable.getAssetList();
-    List<AssetsSubTypeList>? assetSubList =
-        await _fetchMasterTable.getAssetsSubTypeList();
+
+   
     setState(() {
       regionsItems = regions.map((e) => e.regionsName).toList();
-      deptItems = departments.map((e) => e.departmentName).toList();
-      ownerItems = owners.map((e) => e.ownerName).toList();
-      assetItems = assets.map((e) => e.assetsName).toList();
-      assetSubTypeItems = assetSubList.map((e) => e.assetsSubTypeName).toList();
+
+      
     });
   }
 
@@ -299,17 +294,16 @@ class _FormPageState extends State<FormPage> {
               CustomDropDown(
                 value: regionsValue,
                 items: regionsItems,
-                onChanged: (value) => setState(() => regionsValue = value),
+                onChanged: (value) async {
+                  List<Owners>? owners =
+                      await _fetchMasterTable.getOwnersList(value.toString());
+
+                  setState(() {
+                    regionsValue = value;
+                    ownerItems = owners.map((e) => e.ownerName).toList();
+                  });
+                },
                 hint: 'Select Region',
-              ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
-                value: deptValue,
-                items: deptItems,
-                onChanged: (value) => setState(() => deptValue = value),
-                hint: 'Choose Department',
               ),
               SizedBox(
                 height: size.height * 0.025,
@@ -317,8 +311,32 @@ class _FormPageState extends State<FormPage> {
               CustomDropDown(
                 value: ownersValue,
                 items: ownerItems,
-                onChanged: (value) => setState(() => ownersValue = value),
+                onChanged: (value) async {
+                  List<Department>? departments = await _fetchMasterTable
+                      .getDepartmentList(value.toString());
+                  setState(() {
+                    ownersValue = value;
+                    deptItems =
+                        departments.map((e) => e.departmentName).toList();
+                  });
+                },
                 hint: 'Choose-owners-List',
+              ),
+              SizedBox(
+                height: size.height * 0.025,
+              ),
+              CustomDropDown(
+                value: deptValue,
+                items: deptItems,
+                onChanged: (value) async {
+                  List<AssetList>? assets =
+                      await _fetchMasterTable.getAssetList(value.toString());
+                  setState(() {
+                    deptValue = value;
+                    assetItems = assets.map((e) => e.assetsName).toList();
+                  });
+                },
+                hint: 'Choose Department',
               ),
               SizedBox(
                 height: size.height * 0.025,
@@ -326,7 +344,14 @@ class _FormPageState extends State<FormPage> {
               CustomDropDown(
                 value: assetsValue,
                 items: assetItems,
-                onChanged: (value) => setState(() => assetsValue = value),
+                onChanged: (value) async {
+                   List<AssetsSubTypeList>? assetSubList =
+        await _fetchMasterTable.getAssetsSubTypeList(value.toString());
+                  setState(() {
+                    assetsValue = value;
+                    assetSubTypeItems = assetSubList.map((e) => e.assetsSubTypeName).toList();
+                  });
+                },
                 hint: 'Select Asset',
               ),
               SizedBox(
