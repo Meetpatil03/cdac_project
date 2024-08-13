@@ -91,8 +91,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           suffixIcons: const Icon(Icons.lock),
                           obscureText: true,
                           textInputType: TextInputType.visiblePassword,
-                          function: () {},
-                          function2: () {},
+                          
                         ),
                         SizedBox(
                           height: size.height * 0.02,
@@ -103,8 +102,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           suffixIcons: const Icon(Icons.lock),
                           obscureText: true,
                           textInputType: TextInputType.visiblePassword,
-                          function: () {},
-                          function2: () {},
+                          
                         ),
                         SizedBox(
                           height: size.height * 0.03,

@@ -6,30 +6,25 @@ class CustomTextField extends StatelessWidget {
   final Widget suffixIcons;
   final bool obscureText;
   final TextInputType textInputType;
-  final VoidCallback function;
-  final VoidCallback function2;
-  const CustomTextField(
-      {super.key,
-      required this.controller,
-      required this.label,
-      required this.suffixIcons,
-      required this.obscureText,
-      required this.textInputType,
-      required this.function,
-      required this.function2});
+  final String? Function(String?)? validator;
+
+  const CustomTextField({
+    super.key,
+    this.validator,
+    required this.controller,
+    required this.label,
+    required this.suffixIcons,
+    required this.obscureText,
+    required this.textInputType,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: textInputType,
-      onChanged: (value) {
-        function();
-      },
-      onSubmitted: (value) {
-        function2();
-      },
+      validator : validator,
       obscuringCharacter: '*',
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
@@ -47,6 +42,7 @@ class CustomTextField extends StatelessWidget {
         ),
         contentPadding: const EdgeInsets.all(15),
       ),
+  
     );
   }
 }

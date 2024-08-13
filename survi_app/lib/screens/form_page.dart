@@ -18,6 +18,7 @@ import 'package:survi_app/services/fetch_master_table.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
 import 'package:survi_app/widgets/drop_down_list.dart';
+import 'package:survi_app/widgets/utils.dart';
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -32,6 +33,17 @@ class _FormPageState extends State<FormPage> {
   final TextEditingController projectNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   final FetchMasterTable _fetchMasterTable = FetchMasterTable.instance;
+
+  final GlobalKey<FormState> _formkey1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey2 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey3 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey4 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey5 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey6 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey7 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey8 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey9 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey10 = GlobalKey<FormState>();
 
   bool hasInternetConnection = false;
   StreamSubscription? _internetConnectionStream;
@@ -72,6 +84,8 @@ class _FormPageState extends State<FormPage> {
   ];
 
   var entryTypeItems = ["Survey", "Maintenance"];
+  int activeCurrentStep = 0;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -98,6 +112,10 @@ class _FormPageState extends State<FormPage> {
     });
 
     fetchDeptMasterList();
+    _scrollController.addListener(() {
+      // You Can listen to the Scroll events here
+      print("Scroll Position : ${_scrollController.position.pixels}");
+    });
   }
 
   void checkLocationServices() async {
@@ -242,11 +260,8 @@ class _FormPageState extends State<FormPage> {
   Future<void> fetchDeptMasterList() async {
     List<RegionsList> regions = await _fetchMasterTable.getRegionsList();
 
-   
     setState(() {
       regionsItems = regions.map((e) => e.regionsName).toList();
-
-      
     });
   }
 
@@ -255,120 +270,338 @@ class _FormPageState extends State<FormPage> {
     super.dispose();
     descriptionController.dispose();
     _internetConnectionStream!.cancel();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const CustomText(
-          fontSize: 30,
-          text: 'Agents Survey',
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              CustomTextField(
+    List<Step> stepList() => [
+          Step(
+            state: activeCurrentStep > 0
+                ? StepState.complete
+                : activeCurrentStep == 0
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 0 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Project Name',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey1,
+              child: CustomTextField(
                 controller: projectNameController,
                 label: 'Enter Project-Name',
                 suffixIcons: const Icon(Icons.pending_actions),
                 obscureText: false,
                 textInputType: TextInputType.text,
-                function: () {},
-                function2: () {},
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter the Project Name';
+                  }
+                  return null;
+                },
               ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 1
+                ? StepState.complete
+                : activeCurrentStep == 1
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 1 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Select Region',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey2,
+              child: CustomDropDown(
                 value: regionsValue,
                 items: regionsItems,
-                onChanged: (value) async {
-                  List<Owners>? owners =
-                      await _fetchMasterTable.getOwnersList(value.toString());
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Select Region ';
+                  }
 
-                  setState(() {
-                    regionsValue = value;
-                    ownerItems = owners.map((e) => e.ownerName).toList();
-                  });
+                  return null;
+                },
+                onChanged: (value) async {
+                  if (value != null) {
+                    List<Owners>? owners =
+                        await _fetchMasterTable.getOwnersList(value.toString());
+
+                    setState(() {
+                      regionsValue = value;
+                      ownerItems = owners.map((e) => e.ownerName).toList();
+                      ownersValue = null;
+                      deptValue = null;
+                      assetsValue = null;
+                      assetsSubTypeValue = null;
+                    });
+                  }
                 },
                 hint: 'Select Region',
               ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 2
+                ? StepState.complete
+                : activeCurrentStep == 2
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 2 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Owner',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey3,
+              child: CustomDropDown(
                 value: ownersValue,
                 items: ownerItems,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Select Owner";
+                  }
+                  return null;
+                },
                 onChanged: (value) async {
-                  List<Department>? departments = await _fetchMasterTable
-                      .getDepartmentList(value.toString());
-                  setState(() {
-                    ownersValue = value;
-                    deptItems =
-                        departments.map((e) => e.departmentName).toList();
-                  });
+                  if (value != null) {
+                    List<Department>? departments = await _fetchMasterTable
+                        .getDepartmentList(value.toString());
+                    setState(() {
+                      ownersValue = value;
+                      deptItems =
+                          departments.map((e) => e.departmentName).toList();
+                      deptValue = null;
+                      assetsValue = null;
+                      assetsSubTypeValue = null;
+                    });
+                  }
                 },
                 hint: 'Choose-owners-List',
               ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 3
+                ? StepState.complete
+                : activeCurrentStep == 3
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 3 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              "Department",
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey4,
+              child: CustomDropDown(
                 value: deptValue,
                 items: deptItems,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Select Department';
+                  }
+
+                  return null;
+                },
                 onChanged: (value) async {
-                  List<AssetList>? assets =
-                      await _fetchMasterTable.getAssetList(value.toString());
-                  setState(() {
-                    deptValue = value;
-                    assetItems = assets.map((e) => e.assetsName).toList();
-                  });
+                  if (value != null) {
+                    List<AssetList>? assets =
+                        await _fetchMasterTable.getAssetList(value.toString());
+                    setState(() {
+                      deptValue = value;
+                      assetItems = assets.map((e) => e.assetsName).toList();
+                      assetsValue = null;
+                      assetsSubTypeValue = null;
+                    });
+                  }
                 },
                 hint: 'Choose Department',
               ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 4
+                ? StepState.complete
+                : activeCurrentStep == 4
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 4 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Assets',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey5,
+              child: CustomDropDown(
                 value: assetsValue,
                 items: assetItems,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Select Asset';
+                  }
+
+                  return null;
+                },
                 onChanged: (value) async {
-                   List<AssetsSubTypeList>? assetSubList =
-        await _fetchMasterTable.getAssetsSubTypeList(value.toString());
-                  setState(() {
-                    assetsValue = value;
-                    assetSubTypeItems = assetSubList.map((e) => e.assetsSubTypeName).toList();
-                  });
+                  if (value != null) {
+                    List<AssetsSubTypeList>? assetSubList =
+                        await _fetchMasterTable
+                            .getAssetsSubTypeList(value.toString());
+                    setState(() {
+                      assetsValue = value;
+                      assetSubTypeItems =
+                          assetSubList.map((e) => e.assetsSubTypeName).toList();
+                      assetsSubTypeValue = null;
+                    });
+                  }
                 },
                 hint: 'Select Asset',
               ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 5
+                ? StepState.complete
+                : activeCurrentStep == 5
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 5 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Sub-Type',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey6,
+              child: CustomDropDown(
                 value: assetsSubTypeValue,
                 items: assetSubTypeItems,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Select SubType';
+                  }
+
+                  return null;
+                },
                 onChanged: (value) =>
                     setState(() => assetsSubTypeValue = value),
                 hint: 'Choose-Assets SubType',
               ),
-              SizedBox(
-                height: size.height * 0.025,
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 6
+                ? StepState.complete
+                : activeCurrentStep == 6
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 6 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Name',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey7,
+              child: CustomTextField(
+                controller: assetNameController,
+                label: 'Enter Assets-Name',
+                suffixIcons: const Icon(Icons.pending_actions),
+                obscureText: false,
+                textInputType: TextInputType.text,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter Asset Name';
+                  }
+                  return null;
+                },
               ),
-              TextField(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 7
+                ? StepState.complete
+                : activeCurrentStep == 7
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 7 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Description',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey8,
+              child: CustomTextField(
+                controller: descriptionController,
+                label: 'Write description Here',
+                suffixIcons: const Icon(Icons.edit_calendar),
+                obscureText: false,
+                textInputType: TextInputType.text,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Provide Description';
+                  }
+
+                  return null;
+                },
+              ),
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 8
+                ? StepState.complete
+                : activeCurrentStep == 8
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 8 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Date',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formkey9,
+              child: TextFormField(
                 controller: dateController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Pick Date';
+                  }
+
+                  return null;
+                },
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide:
@@ -405,85 +638,122 @@ class _FormPageState extends State<FormPage> {
                   }
                 },
               ),
-              SizedBox(
-                height: size.width * 0.025,
-              ),
-              CustomTextField(
-                controller: assetNameController,
-                label: 'Enter Assets-Name',
-                suffixIcons: const Icon(Icons.pending_actions),
-                obscureText: false,
-                textInputType: TextInputType.text,
-                function: () {},
-                function2: () {},
-              ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              CustomDropDown(
+            ),
+          ),
+          Step(
+            state: activeCurrentStep > 9
+                ? StepState.complete
+                : activeCurrentStep == 9
+                    ? StepState.editing
+                    : StepState.indexed,
+            stepStyle: StepStyle(
+              color: activeCurrentStep > 9 ? Colors.green : Colors.transparent,
+              indexStyle: const TextStyle(fontSize: 18),
+            ),
+            title: const Text(
+              'Purpose',
+              style: TextStyle(fontSize: 18),
+            ),
+            content: Form(
+              key: _formKey10,
+              child: CustomDropDown(
                 value: statusValue,
                 items: statusItems,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Select Status';
+                  }
+
+                  return null;
+                },
                 onChanged: (value) => setState(() => statusValue = value),
                 hint: 'Select Status of Work',
               ),
+            ),
+          ),
+        ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const CustomText(
+          fontSize: 30,
+          text: 'Agents Survey',
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Stepper(
+                  controller: _scrollController,
+                  physics: const ClampingScrollPhysics(),
+                  currentStep: activeCurrentStep,
+                  onStepContinue: () {
+                    if (activeCurrentStep == 0 &&
+                            _formkey1.currentState!.validate() ||
+                        activeCurrentStep == 1 &&
+                            _formkey2.currentState!.validate() ||
+                        activeCurrentStep == 2 &&
+                            _formkey3.currentState!.validate() ||
+                        activeCurrentStep == 3 &&
+                            _formkey4.currentState!.validate() ||
+                        activeCurrentStep == 4 &&
+                            _formkey5.currentState!.validate() ||
+                        activeCurrentStep == 5 &&
+                            _formkey6.currentState!.validate() ||
+                        activeCurrentStep == 6 &&
+                            _formkey7.currentState!.validate() ||
+                        activeCurrentStep == 7 &&
+                            _formkey8.currentState!.validate() ||
+                        activeCurrentStep == 8 &&
+                            _formkey9.currentState!.validate() ||
+                        activeCurrentStep == 9 &&
+                            _formKey10.currentState!.validate()) {
+                      if (activeCurrentStep < (stepList().length - 1)) {
+                        setState(() {
+                          activeCurrentStep += 1;
+                        });
+                        _scrollController.animateTo(activeCurrentStep * 100,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.linear);
+                      }
+                    }
+                  },
+                  onStepTapped: (index) {
+                    if (index > activeCurrentStep) {
+                      return;
+                    } else {
+                      setState(() {
+                        activeCurrentStep = index;
+                      });
+                      _scrollController.animateTo(index * 100,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.linear);
+                    }
+                  },
+                  onStepCancel: () {
+                    if (activeCurrentStep == 0) {
+                      return;
+                    } else {
+                      setState(() {
+                        activeCurrentStep -= 1;
+                      });
+                      _scrollController.animateTo(activeCurrentStep * 100,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.linear);
+                    }
+                  },
+                  steps: stepList()),
               SizedBox(
                 height: size.height * 0.025,
               ),
-              CustomTextField(
-                controller: descriptionController,
-                label: 'Write description Here',
-                suffixIcons: const Icon(Icons.edit_calendar),
-                obscureText: false,
-                textInputType: TextInputType.text,
-                function: () {},
-                function2: () {},
-              ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              longitude == 0 && latitude == 0
-                  ? const Text(
-                      'Fetching-Location.....',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Logitude : $longitude',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Latitude : $latitude',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'timeStamp : $time',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Speed : $speed',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                      ],
-                    ),
               SizedBox(
                 height: size.height * 0.05,
               ),
