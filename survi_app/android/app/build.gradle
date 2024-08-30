@@ -65,4 +65,7 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // implementation 'com.transistorsoft:tsbackgroundfetch:3.1.0' 
+    // implementation 'com.transistorsoft:tslocationmanager:3.7.1' 
+}

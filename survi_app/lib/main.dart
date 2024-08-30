@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:survi_app/provider_services/workmanager_services.dart';
 import 'package:survi_app/screens/splash_screen.dart';
-import 'package:survi_app/services/background_push_data_service.dart';
+
 import 'package:survi_app/services/log_services.dart';
-import 'package:workmanager/workmanager.dart';
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await LogService.init();
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true,
-  );
-  Workmanager().registerPeriodicTask("syncTask", "syncTask",
-      frequency: const Duration(minutes: 15));
-  runApp(const MyApp());
+
+  
+  runApp( 
+    ChangeNotifierProvider(
+    create: (_) => WorkManagerState(),
+    child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

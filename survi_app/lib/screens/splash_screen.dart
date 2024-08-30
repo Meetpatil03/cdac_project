@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       print("Token found, navigating to HomeScreen...");
       // Navigate to home screen if token exists
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) =>  HomeScreen()),
       );
     } else {
       print("No token found, navigating to SignUpScreen...");

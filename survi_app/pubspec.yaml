@@ -53,6 +53,12 @@ dependencies:
   device_info_plus: ^10.1.1
   flutter_device_imei: ^0.0.2
   geocoding: ^3.0.0
+  gif: ^2.3.0
+  socket_io_client: ^2.0.3+1
+  provider: ^6.1.2
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +86,7 @@ flutter:
   assets:
     - assets/rive/
     - assets/images/
+    - assets/gif/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

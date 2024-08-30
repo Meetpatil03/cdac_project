@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:survi_app/functions/push_local_to_mongodb.dart';
 import 'package:survi_app/models/survey_file_list.dart';
 import 'package:survi_app/models/survey_list.dart';
 import 'package:survi_app/models/survey_with_files.dart';
+import 'package:survi_app/provider_services/workmanager_services.dart';
+import 'package:survi_app/services/background_push_data_service.dart';
 import 'package:survi_app/services/database_services.dart';
 
 class AgentsSurveyList extends StatefulWidget {
@@ -16,14 +19,19 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
   final DatabaseServices _databaseServices = DatabaseServices.instance;
   @override
   Widget build(BuildContext context) {
+    final workManagerState = context.watch<WorkManagerState>();
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
               onPressed: () async {
-                pushLocalDataToMongoDB();
+                if (workManagerState.isRunning) {
+                  await workManagerState.stopWorkManager();
+                } else {
+                  await workManagerState.startWorkManager();
+                }
               },
-              icon: const Icon(Icons.send))
+              icon:  Icon(workManagerState.isRunning? Icons.stop : Icons.play_arrow),)
         ],
       ),
       body: _surveyLists(),
