@@ -18,6 +18,7 @@ class _MapViewState extends State<MapView> {
   double currentZoom = 15.0;
   bool isMapReady = false;
   final SendLiveLocation sendLiveLocation = SendLiveLocation();
+  LatLng? mapCenter;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _MapViewState extends State<MapView> {
       polylinePoints.add(
         LatLng(currentPosition!.latitude, currentPosition!.longitude),
       );
+      mapCenter = LatLng(currentPosition!.latitude, currentPosition!.longitude);
     }
 
     setState(() {
@@ -49,9 +51,23 @@ class _MapViewState extends State<MapView> {
       setState(() {
         currentPosition = position;
         polylinePoints.add(LatLng(position.latitude, position.longitude));
-        _mapController.move(
-            LatLng(position.latitude, position.longitude), currentZoom);
+        mapCenter = LatLng(position.latitude, position.longitude);
+        _mapController.move(mapCenter!, currentZoom);
       });
+    });
+  }
+
+  void zoomIn() {
+    setState(() {
+      currentZoom += 1;
+      _mapController.move(mapCenter!, currentZoom);
+    });
+  }
+
+  void zoomOut() {
+    setState(() {
+      currentZoom -= 1;
+      _mapController.move(mapCenter!, currentZoom);
     });
   }
 
@@ -66,6 +82,13 @@ class _MapViewState extends State<MapView> {
                 options: MapOptions(
                   initialCenter: LatLng(
                       currentPosition!.latitude, currentPosition!.longitude),
+                  onPositionChanged: (camera, hasGesture) {
+                    if (hasGesture) {
+                      setState(() {
+                        mapCenter = camera.center;
+                      });
+                    }
+                  },
                   minZoom: 10,
                 ),
                 children: [
@@ -94,8 +117,17 @@ class _MapViewState extends State<MapView> {
                   ])
             : const Center(
                 child: CircularProgressIndicator.adaptive(),
-              )
+              ),
+              Positioned(
+                bottom: 30,
+                right: 10,
+                child: Column(children: [
+                  FloatingActionButton(onPressed: zoomIn,mini: true,child: const Icon(Icons.zoom_in),),
+                  const SizedBox(height: 10,),
+                  FloatingActionButton(onPressed: zoomOut,mini: true,child: const Icon(Icons.zoom_out),),
+                ],),)
       ]),
+      
     );
   }
 }
