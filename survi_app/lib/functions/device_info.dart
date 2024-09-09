@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_device_imei/flutter_device_imei.dart';
-
 import 'package:geolocator/geolocator.dart';
 
 Future<String> getIMEINumber() async {
@@ -40,7 +38,6 @@ Future<Map<String, dynamic>> getDeviceInfo() async {
       'imei': 'IOS Doesn\'t  have IMEI Number',
       'time': await getTimeZone(),
       'location': await getLocation(),
-      
     };
   }
 
@@ -117,4 +114,36 @@ Future<Map<String, dynamic>> getLocation() async {
 Future<String> getTimeZone() async {
   final time = await getCurrentLocation();
   return time!.timestamp.toString();
+}
+
+Future<String?> getAndroidDeviceId() async {
+  try {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    final androidInfo = await deviceInfoPlugin.androidInfo;
+
+    return await getIMEINumber();
+  } catch (e) {
+    print(e.toString());
+    return null;
+  }
+}
+
+Future<String?> getIsoDeviceId() async {
+  try {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    final iosInfo = await deviceInfoPlugin.iosInfo;
+
+    return iosInfo.identifierForVendor;
+  } catch (e) {
+    print(e.toString());
+    return null;
+  }
+}
+
+Future<String?> getDeviceId() async {
+  if (Platform.isAndroid) {
+    return await getAndroidDeviceId();
+  } else if (Platform.isIOS) {
+    return await getIsoDeviceId();
+  }
 }

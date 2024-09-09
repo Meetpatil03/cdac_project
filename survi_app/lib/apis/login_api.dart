@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survi_app/constants.dart';
 import 'package:survi_app/functions/device_info.dart';
 import 'package:survi_app/functions/store_master_table.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
@@ -26,7 +27,7 @@ Future<void> loginUser(BuildContext context, String email, String password,
 
     http.Response response = await http.post(
         Uri.parse(
-            'https://65bd-2409-4081-2d16-299-243e-5e45-9ea-7da9.ngrok-free.app/auth/login'),
+            '$baseUrl/auth/login'),
         headers: headers,
         body: body);
 
@@ -44,41 +45,43 @@ Future<void> loginUser(BuildContext context, String email, String password,
       // print('Old Token : $oldtoken');
       // print('Updated Token : $token');
       storeMasterTable(
-        responseBody['regions'],
-        responseBody['department_name'],
-        responseBody['owners_name'],
-        responseBody['assets_types'],
-        responseBody['assets_sub_types']
-      );
+          responseBody['regions'],
+          responseBody['department_name'],
+          responseBody['owners_name'],
+          responseBody['assets_types'],
+          responseBody['assets_sub_types']);
+
+      final prefs = await SharedPreferences.getInstance();
+      String userId = responseBody['user_id'];
+      await prefs.setString('user_id', userId);
+
       if (!passwordReset) {
-         
         String role = responseBody['role'];
-        String userId = responseBody['user_id'];
-        tellUserToResetPassword(context, role, userId,token);
+        tellUserToResetPassword(context, role, userId, token);
       } else {
-         final prefs = await SharedPreferences.getInstance();
-      final oldtoken = prefs.getString('authToken');
-      await prefs.setString('authToken', token);
-      print('Old Token : $oldtoken');
-      print('Updated Token : $token');
+        final oldtoken = prefs.getString('authToken');
+        await prefs.setString('authToken', token);
+        print('Old Token : $oldtoken');
+        print('Updated Token : $token');
         pushUsertoHome(context);
       }
     } else {
       print('Response StatusCode : ${response.statusCode}');
       print('Response Body : ${response.body}');
     }
-
   } catch (e) {
     print(e.toString());
   }
 }
 
-void tellUserToResetPassword(BuildContext context, String role, String userId,String token) {
+void tellUserToResetPassword(
+    BuildContext context, String role, String userId, String token) {
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
       builder: (context) => ResetPassword(
         role: role,
-        userId: userId, token: token,
+        userId: userId,
+        token: token,
       ),
     ),
   );

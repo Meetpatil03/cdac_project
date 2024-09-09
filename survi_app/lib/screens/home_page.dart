@@ -4,6 +4,7 @@ import 'package:survi_app/functions/send_live_location.dart';
 import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/map_view.dart';
+import 'package:survi_app/screens/read_log_screen.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -131,9 +132,17 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: size.height * 0.08),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder : (context) => const MapView(),),);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const MapView(),
+                ),
+              );
             },
-            style: ElevatedButton.styleFrom(minimumSize:  Size(size.width*0.25, 50), shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),backgroundColor: Colors.green),
+            style: ElevatedButton.styleFrom(
+                minimumSize: Size(size.width * 0.25, 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                backgroundColor: Colors.green),
             child: const Text(
               "Map",
               style: TextStyle(
@@ -142,6 +151,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => ReadLogs()));
+              },
+              child: const Text('Task List')),
         ],
       ),
     );

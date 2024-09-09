@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:survi_app/apis/retrieve_routes_api.dart';
 import 'package:survi_app/functions/send_live_location.dart';
 
 class MapView extends StatefulWidget {
@@ -74,7 +75,16 @@ class _MapViewState extends State<MapView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              retrieveRoutesApi();
+            },
+            icon: const Icon(Icons.map),
+          ),
+        ],
+      ),
       body: Stack(children: [
         isMapReady && currentPosition != null
             ? FlutterMap(
@@ -94,19 +104,21 @@ class _MapViewState extends State<MapView> {
                 children: [
                     TileLayer(
                       urlTemplate:
-                          'https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}.png?api_key=ed679072-f1e0-4feb-b728-48dbbb2134e5',
-                      userAgentPackageName: 'com.example.app',
+                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                     ),
-                    MarkerLayer(markers: [
-                      Marker(
+                    MarkerLayer(
+                      markers: [
+                        Marker(
                           point: LatLng(currentPosition!.latitude,
                               currentPosition!.longitude),
                           child: const Icon(
                             Icons.fmd_good_sharp,
                             color: Colors.red,
                             size: 25,
-                          ))
-                    ]),
+                          ),
+                        ),
+                      ],
+                    ),
                     PolylineLayer(polylines: [
                       Polyline(
                         points: polylinePoints,
@@ -118,16 +130,28 @@ class _MapViewState extends State<MapView> {
             : const Center(
                 child: CircularProgressIndicator.adaptive(),
               ),
-              Positioned(
-                bottom: 30,
-                right: 10,
-                child: Column(children: [
-                  FloatingActionButton(onPressed: zoomIn,mini: true,child: const Icon(Icons.zoom_in),),
-                  const SizedBox(height: 10,),
-                  FloatingActionButton(onPressed: zoomOut,mini: true,child: const Icon(Icons.zoom_out),),
-                ],),)
+        Positioned(
+          bottom: 30,
+          right: 10,
+          child: Column(
+            children: [
+              FloatingActionButton(
+                onPressed: zoomIn,
+                mini: true,
+                child: const Icon(Icons.zoom_in),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              FloatingActionButton(
+                onPressed: zoomOut,
+                mini: true,
+                child: const Icon(Icons.zoom_out),
+              ),
+            ],
+          ),
+        )
       ]),
-      
     );
   }
 }

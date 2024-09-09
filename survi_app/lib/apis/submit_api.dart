@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survi_app/constants.dart';
 
 import 'package:unique_identifier/unique_identifier.dart';
 
@@ -37,7 +38,7 @@ Future<void> pushDataToMongoDB(
     String identifier = (await UniqueIdentifier.serial)!;
 
     var uri = Uri.parse(
-        'https://65bd-2409-4081-2d16-299-243e-5e45-9ea-7da9.ngrok-free.app/submit/');
+        '$baseUrl/submit/');
     var request = http.MultipartRequest('POST', uri)
       ..fields['data'] = jsonString
       ..headers['ngrok-skip-browser-warning'] = "69420"

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:survi_app/constants.dart';
 
 
 import 'package:survi_app/screens/home_page.dart';
@@ -21,7 +22,7 @@ Future<void> resetPassword(String password, BuildContext context,String token) a
   String deviceid = (await UniqueIdentifier.serial)!;
 
   var uri = Uri.parse(
-      'https://65bd-2409-4081-2d16-299-243e-5e45-9ea-7da9.ngrok-free.app/auth/update/resetPassword');
+      '$baseUrl/auth/update/resetPassword');
 
   var hearders = {
     'Content-Type': 'application/json',

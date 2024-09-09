@@ -1,100 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:survi_app/models/assets_list.dart';
-import 'package:survi_app/models/assets_sub_type_list.dart';
-import 'package:survi_app/models/department_list.dart';
-import 'package:survi_app/models/owners_list.dart';
-import 'package:survi_app/services/master_database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ReadLogs extends StatelessWidget {
-   ReadLogs({super.key});
+import 'package:survi_app/models/task_list.dart';
+import 'package:survi_app/services/markers_database.dart';
 
-  final MasterDatabaseService _masterDatabaseService =
-      MasterDatabaseService.instance;
+class ReadLogs extends StatefulWidget {
+  ReadLogs({super.key});
+
+  @override
+  State<ReadLogs> createState() => _ReadLogsState();
+}
+
+class _ReadLogsState extends State<ReadLogs> {
+  final MarkersDatabase _markersDatabase = MarkersDatabase.instance;
+  String? userId;
+
+  Future<String?> _getUserIdFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserId();
+  }
+
+  Future<void> _initializeUserId() async {
+    String? id = await _getUserIdFromSharedPreferences();
+    setState(() {
+      userId = id;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Read Master Table'),
+        title: const Text('Tasks Records'),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: Future.wait([
-          _masterDatabaseService.getDeparmentLists("Government"),
-          _masterDatabaseService.getOwnersList("North America"),
-          _masterDatabaseService.getAssetsList("Finance"),
-          _masterDatabaseService.getAssetsSubTypeList("Building")
-        ]),
+      body: _Tasks(),
+    );
+  }
+
+  Widget _Tasks() {
+    return FutureBuilder(
+        future: _markersDatabase.getRoutesByUserId(userId!),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
+
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return const Center(
+              child: Text('Error fetching data'),
+            );
           }
 
-          final departmentlist = snapshot.data![0] as List<Department>;
-          final ownerslist = snapshot.data![1] as List<Owners>;
-          final assetslist = snapshot.data![2] as List<AssetList>;
-          final assetsubtypelist = snapshot.data![3] as List<AssetsSubTypeList>;
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('No Tasks List'),
+            );
+          }
 
-          return CustomScrollView(
-            slivers: [
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final dept = departmentlist[index];
-                    return ListTile(
-                      title: Text(dept.departmentName),
-                      subtitle: Text(dept.referenceTable),
-                    );
-                  },
-                  childCount: departmentlist.length,
+          List<TaskList> taskList = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: taskList.length,
+            itemBuilder: (context, index) {
+              TaskList task = taskList[index];
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 5),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              ),
-              SliverToBoxAdapter(child: SizedBox(height: 5)),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final owner = ownerslist[index];
-                    return ListTile(
-                      title: Text(owner.ownerName),
-                      subtitle: Text(owner.reference),
-                    );
-                  },
-                  childCount: ownerslist.length,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('agentId: ${task.agentId}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('startLat: ${task.startLat}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('startLng: ${task.startLng}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('endLat: ${task.endLat}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('endLng: ${task.endLng}'),
+                  ],
                 ),
-              ),
-              SliverToBoxAdapter(child: SizedBox(height: 5)),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final asset = assetslist[index];
-                    return ListTile(
-                      title: Text(asset.assetsName),
-                      subtitle: Text(asset.reference),
-                    );
-                  },
-                  childCount: assetslist.length,
-                ),
-              ),
-              SliverToBoxAdapter(child: SizedBox(height: 5)),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final assetsubtype = assetsubtypelist[index];
-                    return ListTile(
-                      title: Text(assetsubtype.assetsSubTypeName),
-                      subtitle: Text(assetsubtype.reference),
-                    );
-                  },
-                  childCount: assetsubtypelist.length,
-                ),
-              ),
-            ],
+              );
+            },
           );
-        },
-      ),
-    );
+        });
   }
 }

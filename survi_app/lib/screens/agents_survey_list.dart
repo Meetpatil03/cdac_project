@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:survi_app/functions/push_local_to_mongodb.dart';
+
 import 'package:survi_app/models/survey_file_list.dart';
 import 'package:survi_app/models/survey_list.dart';
 import 'package:survi_app/models/survey_with_files.dart';
 import 'package:survi_app/provider_services/workmanager_services.dart';
-import 'package:survi_app/services/background_push_data_service.dart';
+
 import 'package:survi_app/services/database_services.dart';
 
 class AgentsSurveyList extends StatefulWidget {
