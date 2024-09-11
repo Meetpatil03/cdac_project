@@ -102,9 +102,11 @@ class _MarkersMapViewState extends State<MarkersMapView> {
                               title: Text(
                                   'Task ${task.id} - Agent : ${task.agentId}'),
                               onTap: () async {
-                                Navigator.pop(context); // close the dialog
-                                _loadTask(task);
-                                // await launchGoogle(LatLng(task.startLat, task.startLng),LatLng(task.endLat, task.endLng));
+                                // Navigator.pop(context); // close the dialog
+                                // _loadTask(task);
+                                await launchGoogle(
+                                    LatLng(task.startLat, task.startLng),
+                                    LatLng(task.endLat, task.endLng));
                               });
                         })),
           );
