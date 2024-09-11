@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color.fromRGBO(13, 16, 34, 1),
         ),
       ),
-      home: const MarkersMapView(),
+      home: const SplashScreen(),
     );
   }
 }

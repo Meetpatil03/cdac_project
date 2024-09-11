@@ -4,6 +4,7 @@ import 'package:survi_app/functions/send_live_location.dart';
 import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/map_view.dart';
+import 'package:survi_app/screens/markers_view.dart';
 import 'package:survi_app/screens/read_log_screen.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 
@@ -160,6 +161,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     .push(MaterialPageRoute(builder: (context) => ReadLogs()));
               },
               child: const Text('Task List')),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MarkersMapView(),
+                  ),
+                );
+              },
+              child: const Text('Markers Liat')),
         ],
       ),
     );

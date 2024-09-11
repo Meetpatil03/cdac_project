@@ -43,7 +43,8 @@ class MarkersDatabase {
       $startLatColumn REAL,
       $startLngColumn REAL,
       $endLatColumn REAL,
-      $endLngColumn REAL
+      $endLngColumn REAL,
+      completed INTEGER DEFAULT 0
     )
 ''');
   }
@@ -73,6 +74,44 @@ class MarkersDatabase {
         .toList();
     print(taskList);
     return taskList;
+  }
+
+  Future<List<TaskList>> getFirstIncompleteRoute(String userId) async {
+    final db = await database;
+    final data = await db.query(
+      _tablesName,
+      where:
+          '$userIdColumn = ? AND completed = ?', // fetching only the incompleted task
+      whereArgs: [userId, 0],
+      
+    );
+
+    List<TaskList> routesList = [];
+
+    routesList = data
+        .map((e) => TaskList(
+            id: e['id'] as int,
+            userId: e[userIdColumn] as String,
+            agentId: e[agentIdColumn] as String,
+            startLat: e[startLatColumn] as double,
+            startLng: e[startLngColumn] as double,
+            endLat: e[endLatColumn] as double,
+            endLng: e[endLngColumn] as double))
+        .toList();
+
+    print(routesList);
+
+    return routesList;
+  }
+
+  Future<void> markRouteAsComplete(int id) async {
+    final db = await database;
+    await db.update(
+      _tablesName,
+      {'completed': 1}, // make the route as completed
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> deleteRoutesByUserId(String userId) async {
