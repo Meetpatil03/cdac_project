@@ -5,7 +5,7 @@ import 'package:survi_app/models/task_list.dart';
 import 'package:survi_app/services/markers_database.dart';
 
 class ReadLogs extends StatefulWidget {
-  ReadLogs({super.key});
+  const ReadLogs({super.key});
 
   @override
   State<ReadLogs> createState() => _ReadLogsState();

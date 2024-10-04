@@ -137,7 +137,7 @@ class MasterDatabaseService {
             id: e['id'] as int, regionsName: e[_regionsColumnName] as String))
         .toList();
 
-    print("Region List : ${regionsList}");
+    print("Region List : $regionsList");
     return regionsList;
   }
 
@@ -153,7 +153,7 @@ class MasterDatabaseService {
             ))
         .toList();
 
-    print("Department List : ${departmentlist}");
+    print("Department List : $departmentlist");
     return departmentlist;
   }
 
@@ -169,7 +169,7 @@ class MasterDatabaseService {
             ))
         .toList();
 
-    print("Owners List : ${ownerslist}");
+    print("Owners List : $ownerslist");
     return ownerslist;
   }
 
@@ -184,7 +184,7 @@ class MasterDatabaseService {
             reference: e[_assetsColumnReference] as String))
         .toList();
 
-    print("assets List : ${assetslist}");
+    print("assets List : $assetslist");
 
     return assetslist;
   }
@@ -201,7 +201,7 @@ class MasterDatabaseService {
             id: e['id'] as int))
         .toList();
 
-    print('Assets Sub Type : ${assetsubtypelist}');
+    print('Assets Sub Type : $assetsubtypelist');
 
     return assetsubtypelist;
   }

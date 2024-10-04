@@ -17,7 +17,7 @@ void pushUsertoHome(BuildContext context) {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (context) =>  HomeScreen(),
+      builder: (context) =>  const HomeScreen(),
     ),
   );
 }

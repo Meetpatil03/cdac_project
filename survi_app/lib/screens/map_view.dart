@@ -13,7 +13,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  MapController _mapController = MapController();
+  final MapController _mapController = MapController();
   Position? currentPosition;
   List<LatLng> polylinePoints = [];
   double currentZoom = 15.0;

@@ -12,7 +12,7 @@ void storeMasterTable(
   for (var region in regionsList) {
     Map<String, dynamic> data = {"region_name": region['name']};
     await _masterDatabaseService.insertorUdateRegions(data);
-    print("inserted regions : ${data}");
+    print("inserted regions : $data");
   }
 
   // insert all department list into department table
@@ -22,7 +22,7 @@ void storeMasterTable(
       "ref_owner": department['owner_name'],
     };
     await _masterDatabaseService.insertOrUpdateDepartment(data);
-    print("inserted department : ${data}");
+    print("inserted department : $data");
   }
 
   for (var owners in ownersList) {
@@ -31,7 +31,7 @@ void storeMasterTable(
       "ref_region": owners['region_name'],
     };
     await _masterDatabaseService.insertOrUpdateOwner(data);
-    print("inserted owner : ${data}");
+    print("inserted owner : $data");
   }
 
   for (var assets in assetslist) {
@@ -40,7 +40,7 @@ void storeMasterTable(
       "ref_department": assets['department_name'],
     };
     await _masterDatabaseService.insertOrUpdateAsset(data);
-    print("inserted assets : ${data}");
+    print("inserted assets : $data");
   }
 
   for (var assetsSubType in assetsSubTypeList) {
@@ -50,7 +50,7 @@ void storeMasterTable(
       "description": assetsSubType['description']
     };
     await _masterDatabaseService.insertOrUpdateAssetSubType(data);
-    print("inserted assetsSubType : ${data}");
+    print("inserted assetsSubType : $data");
   }
 
   print("MasterTable successfully inserted or updated");

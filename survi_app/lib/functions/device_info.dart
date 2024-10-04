@@ -146,4 +146,5 @@ Future<String?> getDeviceId() async {
   } else if (Platform.isIOS) {
     return await getIsoDeviceId();
   }
+  return null;
 }

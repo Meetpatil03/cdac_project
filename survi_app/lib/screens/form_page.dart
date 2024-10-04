@@ -85,7 +85,7 @@ class _FormPageState extends State<FormPage> {
 
   var entryTypeItems = ["Survey", "Maintenance"];
   int activeCurrentStep = 0;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -210,7 +210,7 @@ class _FormPageState extends State<FormPage> {
     print(hasInternetConnection);
 
     if (hasInternetConnection) {
-      print("i am in the if Block Statement ${hasInternetConnection}");
+      print("i am in the if Block Statement $hasInternetConnection");
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Online")));
 

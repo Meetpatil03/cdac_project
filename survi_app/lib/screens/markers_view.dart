@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/functions/google_map_launcher.dart';
 import 'package:survi_app/functions/open_route_service.dart';
+import 'package:survi_app/functions/send_live_location.dart';
 import 'package:survi_app/models/task_list.dart';
 import 'package:survi_app/services/markers_database.dart';
 
@@ -19,10 +21,12 @@ class _MarkersMapViewState extends State<MarkersMapView> {
   String? userId;
   Marker? _startMarker;
   Marker? _endMarker;
-  List<Marker> _markers = [];
+  final List<Marker> _markers = [];
   List<LatLng> _polylineCoordinates = [];
   List<TaskList> _tasks = [];
   TaskList? _currentTask;
+  Position? currentPosition;
+  final SendLiveLocation _sendLiveLocation = SendLiveLocation();
 
   Future<void> _initializeUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -104,9 +108,21 @@ class _MarkersMapViewState extends State<MarkersMapView> {
                               onTap: () async {
                                 // Navigator.pop(context); // close the dialog
                                 // _loadTask(task);
-                                await launchGoogle(
-                                    LatLng(task.startLat, task.startLng),
-                                    LatLng(task.endLat, task.endLng));
+                               await  _sendLiveLocation.trackLiveLocation();
+                                // if (currentPosition != null) {
+                                //   await launchGoogle(
+                                //       // LatLng(task.startLat, task.startLng),
+                                //       LatLng(currentPosition!.latitude,
+                                //           currentPosition!.longitude),
+                                //       LatLng(task.endLat, task.endLng));
+                                // } else {
+                                //   // Handle the case where the location is not available
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //         content: Text(
+                                //             "Current location not available")),
+                                //   );
+                                // }
                               });
                         })),
           );
@@ -117,6 +133,12 @@ class _MarkersMapViewState extends State<MarkersMapView> {
   void initState() {
     super.initState();
     _initializeUserId();
+    getLocation();
+  }
+
+  Future<void> getLocation() async {
+    currentPosition = await _sendLiveLocation.determinePosition();
+    setState(() {});
   }
 
   @override

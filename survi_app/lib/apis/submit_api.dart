@@ -4,78 +4,87 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/constants.dart';
 
-import 'package:unique_identifier/unique_identifier.dart';
-
 Future<void> pushDataToMongoDB(
-  String region,
-  double longitude,double latitude,String altitude,String speed,String time,String remark,String subdepartment,String assetowner,String projectName,String assettype,String subtype,String assetyear,String assetname,String status,List<File> files
-) async {
-   
+    String region,
+    double longitude,
+    double latitude,
+    String altitude,
+    String speed,
+    String time,
+    String remark,
+    String subdepartment,
+    String assetowner,
+    String projectName,
+    String assettype,
+    String subtype,
+    String assetyear,
+    String assetname,
+    String status,
+    List<File> files) async {
   try {
+    // Prepare JSON data
     Map<String, dynamic> data = {
       "region": region,
-      "location": {"coordinates": [longitude,latitude], "altitude": altitude,"speed":speed,"time":time},
+      "location": {
+        "coordinates": [longitude, latitude],
+        "altitude": altitude,
+        "speed": speed,
+        "time": time,
+      },
       "description": remark,
       "department": subdepartment,
       "owner": assetowner,
       "projectName": projectName,
       "assetType": assettype,
-      // "subtype": subtype,
       "schemeComponent": "the form is uploaded from mobile",
       "year": assetyear,
       "assets": assetname,
-      "status": status
+      "status": status,
     };
 
     String jsonString = jsonEncode(data);
+    print(data);
 
+    // Retrieve token and cookies from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
 
-    String finalToken = "Token ";
-    finalToken += token.toString();
+    final cookies = prefs.getString('cookies');
 
-    String identifier = (await UniqueIdentifier.serial)!;
-
-    var uri = Uri.parse(
-        '$baseUrl/submit/');
+    // Prepare a POST request using MultipartRequest
+    var uri = Uri.parse('$baseUrl/submit/');
     var request = http.MultipartRequest('POST', uri)
-      ..fields['data'] = jsonString
-      ..headers['ngrok-skip-browser-warning'] = "69420"
-      ..headers['authorization'] = finalToken
-      ..headers['deviceid'] = identifier;
+      ..headers['ngrok-skip-browser-warning'] = '69420';
 
-    List<Map<String, dynamic>> fileBytesList = [];
-
-    // Read file bytes and store in the list
-    for (var file in files) {
-      List<int> fileBytes = await file.readAsBytes();
-      fileBytesList
-          .add({'filename': file.path.split('/').last, 'bytes': fileBytes});
+    // Add cookies to the request (if available)
+    if (cookies != null) {
+      request.headers['Cookie'] = cookies; // Set cookies directly in headers
     }
 
+    // Add JSON data as a field
+    request.fields['data'] = jsonString;
+
     // Add files to the request
-    for (var fileData in fileBytesList) {
-      request.files.add(http.MultipartFile.fromBytes(
+    for (var file in files) {
+      request.files.add(await http.MultipartFile.fromPath(
         'files',
-        fileData['bytes'],
-        filename: fileData['filename'],
+        file.path,
+        filename: file.path.split('/').last, // Set the filename correctly
       ));
     }
 
+    // Send the request and await the response
     var response = await request.send();
 
+    // Read and print the response
     var responseBody = await http.Response.fromStream(response);
-    print(responseBody.body.toString());
+    print(responseBody.body);
 
-    if (responseBody.statusCode == 201) {
-      print('data has been pushed properly');
+    if (response.statusCode == 201) {
+      print('Data has been pushed properly');
     } else {
-      print(' StatusCode : ${response.statusCode}');
+      print('StatusCode: ${response.statusCode}');
     }
-
-   
   } catch (e) {
-    print(e.toString());
+    print('Error: $e');
   }
 }

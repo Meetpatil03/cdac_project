@@ -29,10 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    Future<void> _logout() async {
+    Future<void> logout() async {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      print('Removing Token....');
-      await prefs.remove('authToken');
+      print('Removing Cookies....');
+      await prefs.remove('cookies');
       print('You Logged out Successfully');
       Navigator.pushReplacement(
         context,
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _logout,
+            onPressed: logout,
             icon: const Icon(Icons.logout_outlined),
           ),
         ],
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isTrackingPerson = !isTrackingPerson;
                   // start Sending location to admin
                 });
-                liveLocation.trackLiveLocation(context);
+                await liveLocation.trackLiveLocation();
               } else {
                 setState(() {
                   isTrackingPerson = !isTrackingPerson;
@@ -173,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: const Text('Markers Liat')),
+          SizedBox(height: 20),
         ],
       ),
     );

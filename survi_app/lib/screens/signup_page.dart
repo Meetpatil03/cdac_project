@@ -52,7 +52,7 @@ Future<void> createUser(
     if (response.statusCode == 201) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       String token = responseBody['token'];
-      print('Account created, Token ${token}');
+      print('Account created, Token $token');
 
       // storing token in shared_preferences
       final prefs = await SharedPreferences.getInstance();

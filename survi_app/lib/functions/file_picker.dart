@@ -14,7 +14,7 @@ Future<List<File>> pickFiles(BuildContext context) async {
       return result.paths.map((path) => File(path!)).toList();
     } else if (result == null) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("No Files Selected")));
+          .showSnackBar(const SnackBar(content: Text("No Files Selected")));
       return [];
     }
   } catch (e) {

@@ -90,7 +90,7 @@ class _AgentsSurveyListState extends State<AgentsSurveyList> {
                         const Text('Files:',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
-                        ...files.map((file) => Text(file.filePath)).toList(),
+                        ...files.map((file) => Text(file.filePath)),
                       ],
                     ),
                   ),

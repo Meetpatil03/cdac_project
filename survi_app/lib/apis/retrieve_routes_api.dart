@@ -12,7 +12,7 @@ Future<void> retrieveRoutesApi() async {
     String url = '$baseUrl/admin/route/$userId';
     print(url);
     String token = prefs.getString('authToken').toString();
-    token = "Token " + token;
+    token = "Token $token";
     String? deviceId = await getDeviceId();
 
     Map<String, String> header = {

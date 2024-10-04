@@ -4,7 +4,7 @@ import 'package:survi_app/services/markers_database.dart';
 Future<void> storeRoutes(
   Map<String, dynamic> data,
 ) async {
-  final MarkersDatabase _markersDatabase = MarkersDatabase.instance;
+  final MarkersDatabase markersDatabase = MarkersDatabase.instance;
   final prefs = await SharedPreferences.getInstance();
   String userId = (prefs.getString('user_id')).toString();
 
@@ -26,7 +26,7 @@ Future<void> storeRoutes(
       'endLng': endLng
     };
 
-     _markersDatabase.insertRoute(routeData);
+     markersDatabase.insertRoute(routeData);
     print("Data inserted");
   }
 }

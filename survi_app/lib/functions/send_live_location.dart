@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class SendLiveLocation {
@@ -31,14 +30,13 @@ class SendLiveLocation {
     return true;
   }
 
-  Future<void> trackLiveLocation(BuildContext context) async {
+  Future<void> trackLiveLocation() async {
     bool servicesGranted = await checkPersmissions();
 
     if (servicesGranted) {
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter: 10,
         ),
       ).listen((Position position) {
         print("Current Position: ${position.longitude} ${position.latitude}");

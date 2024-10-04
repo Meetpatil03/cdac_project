@@ -8,16 +8,12 @@ import 'package:survi_app/screens/home_page.dart';
 
 import 'package:unique_identifier/unique_identifier.dart';
 
-Future<void> resetPassword(String password, BuildContext context,String token) async {
+Future<void> resetPassword(String password, BuildContext context) async {
   Map<String, String> body = {'password': password};
 
   String jsonString = jsonEncode(body);
-  // final prefs = await SharedPreferences.getInstance();
-  // final token = prefs.getString('authToken');
-
-  String finalToken = "Token ";
-  finalToken += token.toString();
-  print(finalToken);
+  
+  
 
   String deviceid = (await UniqueIdentifier.serial)!;
 
@@ -27,7 +23,7 @@ Future<void> resetPassword(String password, BuildContext context,String token) a
   var hearders = {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': '69420',
-    'authorization': finalToken,
+    
     'deviceid': deviceid
   };
 
@@ -47,7 +43,7 @@ Future<void> resetPassword(String password, BuildContext context,String token) a
 void pushUserToHomePage(BuildContext context) {
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
-      builder: (context) =>  HomeScreen(),
+      builder: (context) =>  const HomeScreen(),
     ),
   );
 }
