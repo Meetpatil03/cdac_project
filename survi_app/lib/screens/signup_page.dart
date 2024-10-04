@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:survi_app/screens/login_page.dart';
+import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
 import 'package:http/http.dart' as http;
@@ -52,7 +52,7 @@ Future<void> createUser(
     if (response.statusCode == 201) {
       final Map<String, dynamic> responseBody = json.decode(response.body);
       String token = responseBody['token'];
-      print('Account created, Token ${token}');
+      print('Account created, Token $token');
 
       // storing token in shared_preferences
       final prefs = await SharedPreferences.getInstance();
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
               controller: firstnameController,
               label: 'First-Name',
               suffixIcons: const Icon(Icons.person),
-              obscureText: false, function: () {  }, function2: () {  },
+              obscureText: false,
             ),
             const SizedBox(
               height: 20,
@@ -142,7 +142,7 @@ class _SignUpState extends State<SignUp> {
               label: 'Last-Name',
               suffixIcons: const Icon(Icons.person),
               obscureText: false,
-              textInputType: TextInputType.name, function: () {  }, function2: () {  },
+              textInputType: TextInputType.name,
             ),
             const SizedBox(
               height: 20,
@@ -152,7 +152,7 @@ class _SignUpState extends State<SignUp> {
               label: 'User-Name',
               suffixIcons: const Icon(Icons.edit_document),
               obscureText: false,
-              textInputType: TextInputType.name, function: () {  }, function2: () {  },
+              textInputType: TextInputType.name,
             ),
             const SizedBox(
               height: 20,
@@ -162,7 +162,7 @@ class _SignUpState extends State<SignUp> {
               label: 'Email-ID',
               suffixIcons: const Icon(Icons.mail_rounded),
               obscureText: false,
-              textInputType: TextInputType.emailAddress, function: () {  }, function2: () {  },
+              textInputType: TextInputType.emailAddress, 
             ),
             const SizedBox(
               height: 20,
@@ -195,7 +195,7 @@ class _SignUpState extends State<SignUp> {
                 textInputType: TextInputType.text,
                 label: 'Password',
                 suffixIcons: const Icon(Icons.key_rounded),
-                obscureText: true, function: () {  }, function2: () {  },),
+                obscureText: true,),
             const SizedBox(
               height: 20,
             ),

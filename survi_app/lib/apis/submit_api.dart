@@ -2,71 +2,89 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:unique_identifier/unique_identifier.dart';
+import 'package:survi_app/constants.dart';
 
 Future<void> pushDataToMongoDB(
-  List<double> coordinates,
-  String altitude,
-  String speed,
-  String time,
-  String description,
-  List<File> files,
-) async {
+    String region,
+    double longitude,
+    double latitude,
+    String altitude,
+    String speed,
+    String time,
+    String remark,
+    String subdepartment,
+    String assetowner,
+    String projectName,
+    String assettype,
+    String subtype,
+    String assetyear,
+    String assetname,
+    String status,
+    List<File> files) async {
   try {
+    // Prepare JSON data
     Map<String, dynamic> data = {
-      "location": {"coordinates": coordinates, "altitude": altitude},
-      "speed": speed,
-      "time": time,
-      "surveyDescription": description
+      "region": region,
+      "location": {
+        "coordinates": [longitude, latitude],
+        "altitude": altitude,
+        "speed": speed,
+        "time": time,
+      },
+      "description": remark,
+      "department": subdepartment,
+      "owner": assetowner,
+      "projectName": projectName,
+      "assetType": assettype,
+      "schemeComponent": "the form is uploaded from mobile",
+      "year": assetyear,
+      "assets": assetname,
+      "status": status,
     };
 
     String jsonString = jsonEncode(data);
+    print(data);
 
+    // Retrieve token and cookies from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
 
-    String finalToken = "Token ";
-    finalToken += token.toString();
+    final cookies = prefs.getString('cookies');
 
-    String identifier = (await UniqueIdentifier.serial)!;
-
-    var uri = Uri.parse('http://192.168.27.208:3000/submit/');
+    // Prepare a POST request using MultipartRequest
+    var uri = Uri.parse('$baseUrl/submit/');
     var request = http.MultipartRequest('POST', uri)
-      ..fields['data'] = jsonString
-      ..headers['authorization'] = finalToken
-      ..headers['deviceId'] = identifier;
+      ..headers['ngrok-skip-browser-warning'] = '69420';
 
-    List<Map<String, dynamic>> fileBytesList = [];
-
-    // Read file bytes and store in the list
-    for (var file in files) {
-      List<int> fileBytes = await file.readAsBytes();
-      fileBytesList
-          .add({'filename': file.path.split('/').last, 'bytes': fileBytes});
+    // Add cookies to the request (if available)
+    if (cookies != null) {
+      request.headers['Cookie'] = cookies; // Set cookies directly in headers
     }
 
+    // Add JSON data as a field
+    request.fields['data'] = jsonString;
+
     // Add files to the request
-    for (var fileData in fileBytesList) {
-      request.files.add(http.MultipartFile.fromBytes(
+    for (var file in files) {
+      request.files.add(await http.MultipartFile.fromPath(
         'files',
-        fileData['bytes'],
-        filename: fileData['filename'],
+        file.path,
+        filename: file.path.split('/').last, // Set the filename correctly
       ));
     }
 
+    // Send the request and await the response
     var response = await request.send();
 
+    // Read and print the response
     var responseBody = await http.Response.fromStream(response);
-    print(responseBody.body.toString());
+    print(responseBody.body);
 
-    if (responseBody.statusCode == 201) {
-      print('data has been pushed properly');
+    if (response.statusCode == 201) {
+      print('Data has been pushed properly');
     } else {
-      print(' StatusCode : ${response.statusCode}');
+      print('StatusCode: ${response.statusCode}');
     }
-
-    print('your to the end of api part');
   } catch (e) {
-    print(e.toString());
+    print('Error: $e');
   }
 }

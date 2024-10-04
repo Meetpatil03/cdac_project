@@ -26,6 +26,7 @@ android {
     namespace "com.example.survi_app"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    // ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -64,4 +65,7 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // implementation 'com.transistorsoft:tsbackgroundfetch:3.1.0' 
+    // implementation 'com.transistorsoft:tslocationmanager:3.7.1' 
+}
