@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:survi_app/apis/location_sending_api.dart';
 
 class SendLiveLocation {
   SendLiveLocation();
@@ -36,10 +37,12 @@ class SendLiveLocation {
     if (servicesGranted) {
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
+          distanceFilter: 2,
           accuracy: LocationAccuracy.high,
         ),
       ).listen((Position position) {
         print("Current Position: ${position.longitude} ${position.latitude}");
+        sendLiveLocation(position.longitude, position.latitude);
       });
     } else {
       print("Some Error Occurred");

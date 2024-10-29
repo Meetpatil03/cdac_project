@@ -24,6 +24,7 @@ class _ReadLogsState extends State<ReadLogs> {
   void initState() {
     super.initState();
     _initializeUserId();
+    fetchTheMarkers();
   }
 
   Future<void> _initializeUserId() async {
@@ -44,9 +45,14 @@ class _ReadLogsState extends State<ReadLogs> {
     );
   }
 
+  Future<void> fetchTheMarkers() async {
+    List<TaskList> data = await _markersDatabase.getAllRoutes();
+    print('Fetched data :$data');
+  }
+
   Widget _Tasks() {
     return FutureBuilder(
-        future: _markersDatabase.getRoutesByUserId(userId!),
+        future: _markersDatabase.getAllRoutes(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -83,23 +89,22 @@ class _ReadLogsState extends State<ReadLogs> {
                     const SizedBox(
                       height: 5,
                     ),
+                    Text('Task Id: ${task.taskId}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
                     Text('agentId: ${task.agentId}'),
                     const SizedBox(
                       height: 5,
                     ),
-                    Text('startLat: ${task.startLat}'),
+                    Text('latitude: ${task.latitude}'),
                     const SizedBox(
                       height: 5,
                     ),
-                    Text('startLng: ${task.startLng}'),
+                    Text('longitude: ${task.longitude}'),
                     const SizedBox(
                       height: 5,
                     ),
-                    Text('endLat: ${task.endLat}'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text('endLng: ${task.endLng}'),
                   ],
                 ),
               );

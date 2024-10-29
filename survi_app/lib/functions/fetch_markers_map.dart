@@ -2,31 +2,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survi_app/services/markers_database.dart';
 
 Future<void> storeRoutes(
-  Map<String, dynamic> data,
+  List<dynamic> routes,
 ) async {
   final MarkersDatabase markersDatabase = MarkersDatabase.instance;
   final prefs = await SharedPreferences.getInstance();
   String userId = (prefs.getString('user_id')).toString();
+  List<dynamic> route = [];
+  for (int i = 0; i < routes.length; i++) {
+    int taskId = i + 1;
+    String routeId = routes[i]["_id"];
+    String agentId = routes[i]["agentId"];
+    route = routes[i]["route"];
+    for (int j = 0; j < route.length; j++) {
+      double latitude = route[j]["lat"];
+      double longitude = route[j]["lng"];
 
-  for (var route in data['routes']) {
-    String agentId = route['agentId'];
-    double startLat = route['route'][0]["lat"];
-    double startLng = route['route'][0]["lng"];
-    double endLat = route['route'][1]["lat"];
-    double endLng = route['route'][1]["lng"];
+      Map<String, dynamic> data = {
+        "task_id": taskId,
+        "user_id": userId,
+        "agent_id": agentId,
+        "route_id": routeId,
+        "latitude": latitude,
+        "longitude": longitude,
+        "status": 0
+      };
 
-    print("agentId $agentId, startLat: $startLat, startLng: $startLng, endLat: $endLat, endLng: $endLng");
-
-    Map<String, dynamic> routeData = {
-      'user_id': userId,
-      'agent_id': agentId,
-      'startLat': startLat,
-      'startLng': startLng,
-      'endLat': endLat,
-      'endLng': endLng
-    };
-
-     markersDatabase.insertRoute(routeData);
-    print("Data inserted");
+      markersDatabase.insertRoute(data);
+    }
   }
+  print("Data inserted");
 }

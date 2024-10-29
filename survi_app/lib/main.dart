@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:survi_app/provider_services/workmanager_services.dart';
+import 'package:survi_app/screens/home_page.dart';
 import 'package:survi_app/screens/splash_screen.dart';
 import 'package:survi_app/services/log_services.dart';
 
@@ -14,7 +15,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+ 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color.fromRGBO(13, 16, 34, 1),
         ),
       ),
-      home: const SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }

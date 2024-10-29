@@ -1,18 +1,20 @@
 class TaskList {
   final int id;
+  final int taskId;
   final String userId;
   final String agentId;
-  final double startLat;
-  final double startLng;
-  final double endLat;
-  final double endLng;
+  final String routeId;
+  final double latitude;
+  final double longitude;
+  final int status;
 
   TaskList(
       {required this.id,
+      required this.taskId,
       required this.userId,
       required this.agentId,
-      required this.startLat,
-      required this.startLng,
-      required this.endLat,
-      required this.endLng});
+      required this.routeId,
+      required this.latitude,
+      required this.longitude,
+      required this.status});
 }

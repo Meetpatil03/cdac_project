@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survi_app/apis/web_services.dart';
+import 'package:survi_app/constants.dart';
 import 'package:survi_app/screens/home_page.dart';
 import 'package:survi_app/screens/onboarding_screens/onboarding_view.dart';
 
@@ -18,12 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkCookie() async {
-    print("Checking for Cookies...");
-    final prefs = await SharedPreferences.getInstance();
-    final cookies = prefs.getString('cookies');
-    print("Cookies: $cookies");
+    WebService webService = WebService();
 
-    if (cookies != null) {
+    // ensure cookiejar is initialized
+    await webService.ensureInitialized();
+
+    final uri = Uri.parse(baseUrl);
+
+    // get cookies for specified Uri
+    List<Cookie> cookies = await webService.cookieJar.loadForRequest(uri);
+
+    if (cookies.isNotEmpty) {
       print("Token found, navigating to HomeScreen...");
       // Navigate to home screen if token exists
       Navigator.of(context).pushReplacement(
@@ -38,8 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survi_app/apis/web_services.dart';
 import 'package:survi_app/functions/send_live_location.dart';
 import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
@@ -30,10 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
 
     Future<void> logout() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      print('Removing Cookies....');
-      await prefs.remove('cookies');
-      print('You Logged out Successfully');
+      WebService webService = WebService();
+
+      // ensure to Intialise cookie
+      await webService.ensureInitialized();
+
+      await webService.cookieJar.deleteAll();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

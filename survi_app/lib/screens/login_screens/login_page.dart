@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rive/rive.dart';
-import 'package:survi_app/apis/login_api.dart';
+
+import 'package:survi_app/apis/web_services.dart';
+
 import 'package:survi_app/screens/home_page.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 import 'package:unique_identifier/unique_identifier.dart';
@@ -17,7 +19,7 @@ void pushUsertoHome(BuildContext context) {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (context) =>  const HomeScreen(),
+      builder: (context) => const HomeScreen(),
     ),
   );
 }
@@ -32,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   SMITrigger? trigSuccess;
   SMITrigger? trigFail;
   SMIInput<double>? look;
+  WebService webService = WebService();
 
   @override
   void dispose() {
@@ -48,37 +51,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
     _initUniqueIdentifierState();
     RiveFile.initialize().then((_) {
-       rootBundle
-        .load('assets/rive/animated_login_character.riv')
-        .then((byteData) {
-      var riveFile = RiveFile.import(byteData);
-      var mArtBoard = riveFile.mainArtboard;
-      _stateMachineController =
-          StateMachineController.fromArtboard(mArtBoard, 'Login Machine');
+      rootBundle
+          .load('assets/rive/animated_login_character.riv')
+          .then((byteData) {
+        var riveFile = RiveFile.import(byteData);
+        var mArtBoard = riveFile.mainArtboard;
+        _stateMachineController =
+            StateMachineController.fromArtboard(mArtBoard, 'Login Machine');
 
-      if (_stateMachineController != null) {
-        mArtBoard.addController(_stateMachineController!);
-        mainArtBoard = mArtBoard;
-        isChecking = _stateMachineController!.findSMI('isChecking');
-        isHandsUp = _stateMachineController!.findSMI('isHandsUp');
-        trigSuccess = _stateMachineController!.findSMI('trigSuccess');
-        trigFail = _stateMachineController!.findSMI('trigFail');
-        look =
-            _stateMachineController!.findInput<double>('numLook') as SMINumber;
+        if (_stateMachineController != null) {
+          mArtBoard.addController(_stateMachineController!);
+          mainArtBoard = mArtBoard;
+          isChecking = _stateMachineController!.findSMI('isChecking');
+          isHandsUp = _stateMachineController!.findSMI('isHandsUp');
+          trigSuccess = _stateMachineController!.findSMI('trigSuccess');
+          trigFail = _stateMachineController!.findSMI('trigFail');
+          look = _stateMachineController!.findInput<double>('numLook')
+              as SMINumber;
 
-        setState(() {});
-      }
+          setState(() {});
+        }
+      });
     });
-    });
-
-   
   }
 
   Future<void> _initUniqueIdentifierState() async {
     String identifier = '';
     try {
       identifier = (await UniqueIdentifier.serial)!;
-      
     } catch (e) {
       print('identifier failed to get IEMI Number');
       print(e.toString());
@@ -101,7 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-           
             mainArtBoard != null
                 ? SizedBox(
                     height: 300,
@@ -195,8 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                loginUser(context, emailController.text.toString(),
-                    passwordController.text.toString(), _identifier);
+                webService.loginFunction(
+                    emailController.text, passwordController.text, _identifier,context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,

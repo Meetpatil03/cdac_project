@@ -7,12 +7,14 @@ class MarkersDatabase {
   static final MarkersDatabase instance = MarkersDatabase._contructor();
 
   final String _tablesName = 'markers';
-  final String userIdColumn = 'user_id';
-  final String agentIdColumn = 'agent_id';
-  final String startLatColumn = 'startLat';
-  final String startLngColumn = 'startLng';
-  final String endLatColumn = 'endLat';
-  final String endLngColumn = 'endLng';
+  final String _idColumn = 'id';
+  final String _userIdColumn = 'user_id';
+  final String _taskIdColumn = 'task_id';
+  final String _agentIdColumn = 'agent_id';
+  final String _routeIdColumn = 'route_id';
+  final String _latitudeColumn = 'latitude';
+  final String _longitudeColumn = 'longitude';
+  final String _statusColumn = 'status';
 
   MarkersDatabase._contructor();
 
@@ -37,14 +39,14 @@ class MarkersDatabase {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE $_tablesName(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      $userIdColumn TEXT,
-      $agentIdColumn TEXT,
-      $startLatColumn REAL,
-      $startLngColumn REAL,
-      $endLatColumn REAL,
-      $endLngColumn REAL,
-      completed INTEGER DEFAULT 0
+      $_idColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+      $_taskIdColumn REAL,
+      $_userIdColumn TEXT,
+      $_agentIdColumn TEXT,
+      $_routeIdColumn TEXT,
+      $_latitudeColumn REAL,
+      $_longitudeColumn REAL,
+      $_statusColumn INTEGER
     )
 ''');
   }
@@ -53,70 +55,28 @@ class MarkersDatabase {
     print(route);
     final db = await database;
     await db.insert(_tablesName, route);
+    print("inserted in SQLite $route");
   }
 
-  Future<List<TaskList>> getRoutesByUserId(String userId) async {
+  Future<List<TaskList>> getAllRoutes() async {
     final db = await database;
-    final data = await db
-        .query(_tablesName, where: '$userIdColumn = ?', whereArgs: [userId]);
+    final data = await db.query(_tablesName);
 
-    print(" raw data from the database $data");
-
-    List<TaskList> taskList = data
-        .map((e) => TaskList(
-            id: e['id'] as int,
-            userId: e[userIdColumn] as String,
-            agentId: e[agentIdColumn] as String,
-            startLat: e[startLatColumn] as double,
-            startLng: e[startLngColumn] as double,
-            endLat: e[endLatColumn] as double,
-            endLng: e[endLngColumn] as double))
-        .toList();
-    print(taskList);
-    return taskList;
-  }
-
-  Future<List<TaskList>> getFirstIncompleteRoute(String userId) async {
-    final db = await database;
-    final data = await db.query(
-      _tablesName,
-      where:
-          '$userIdColumn = ? AND completed = ?', // fetching only the incompleted task
-      whereArgs: [userId, 0],
-      
-    );
-
-    List<TaskList> routesList = [];
-
-    routesList = data
-        .map((e) => TaskList(
-            id: e['id'] as int,
-            userId: e[userIdColumn] as String,
-            agentId: e[agentIdColumn] as String,
-            startLat: e[startLatColumn] as double,
-            startLng: e[startLngColumn] as double,
-            endLat: e[endLatColumn] as double,
-            endLng: e[endLngColumn] as double))
+    List<TaskList> routes = data
+        .map(
+          (e) => TaskList(
+            id: e[_idColumn] as int,
+            taskId: (e[_taskIdColumn] as num).toInt(),
+            agentId: e[_agentIdColumn] as String,
+            routeId: e[_routeIdColumn] as String,
+            latitude: (e[_latitudeColumn] as num).toDouble(),
+            longitude: (e[_longitudeColumn] as num).toDouble(),
+            status: (e[_statusColumn] as num).toInt(),
+            userId: e[_userIdColumn] as String,
+          ),
+        )
         .toList();
 
-    print(routesList);
-
-    return routesList;
-  }
-
-  Future<void> markRouteAsComplete(int id) async {
-    final db = await database;
-    await db.update(
-      _tablesName,
-      {'completed': 1}, // make the route as completed
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<void> deleteRoutesByUserId(String userId) async {
-    final db = await database;
-    await db
-        .delete(_tablesName, where: '$userIdColumn = ?', whereArgs: [userId]);
+    return routes;
   }
 }

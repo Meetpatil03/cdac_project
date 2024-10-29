@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:survi_app/apis/web_services.dart';
 import 'package:survi_app/constants.dart';
+import 'package:survi_app/functions/device_info.dart';
 
 Future<void> pushDataToMongoDB(
     String region,
@@ -21,6 +24,8 @@ Future<void> pushDataToMongoDB(
     String assetname,
     String status,
     List<File> files) async {
+  Response response;
+  print("Submitting Data");
   try {
     // Prepare JSON data
     Map<String, dynamic> data = {
@@ -45,44 +50,58 @@ Future<void> pushDataToMongoDB(
     String jsonString = jsonEncode(data);
     print(data);
 
-    // Retrieve token and cookies from SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
+    Dio dio = Dio();
+    WebService webService = WebService();
 
-    final cookies = prefs.getString('cookies');
+    // Ensure the cookie jar is initialized
+    await webService.ensureInitialized();
 
-    // Prepare a POST request using MultipartRequest
-    var uri = Uri.parse('$baseUrl/submit/');
-    var request = http.MultipartRequest('POST', uri)
-      ..headers['ngrok-skip-browser-warning'] = '69420';
+    final cookieJar = webService.cookieJar;
 
-    // Add cookies to the request (if available)
-    if (cookies != null) {
-      request.headers['Cookie'] = cookies; // Set cookies directly in headers
-    }
+    dio.interceptors.add(CookieManager(cookieJar));
+
+    print("My Cookie: $cookieJar");
+
+    FormData formData = FormData();
 
     // Add JSON data as a field
-    request.fields['data'] = jsonString;
+    formData.fields.add(MapEntry('data', jsonString));
 
     // Add files to the request
     for (var file in files) {
-      request.files.add(await http.MultipartFile.fromPath(
+      String fileName = file.path.split('/').last; // Extract the filename
+      formData.files.add(MapEntry(
         'files',
-        file.path,
-        filename: file.path.split('/').last, // Set the filename correctly
+        await MultipartFile.fromFile(file.path, filename: fileName),
       ));
     }
 
-    // Send the request and await the response
-    var response = await request.send();
+    final String url = "$baseUrl/submit";
 
-    // Read and print the response
-    var responseBody = await http.Response.fromStream(response);
-    print(responseBody.body);
+    String deviceId = (await getDeviceId())!;
+
+    Map<String, String> headers = {
+      "Content-Type": "multipart/form-data",
+      "ngrok-skip-browser-warning": "69420",
+      "deviceid": deviceId
+    };
+
+    // Prepare a POST request using MultipartRequest
+    // Send POST request using Dio
+    response = await dio.post(
+      url,
+      data: formData,
+      options: Options(
+        contentType: "multipart/form-data",
+        headers: headers,
+      ),
+    );
 
     if (response.statusCode == 201) {
       print('Data has been pushed properly');
     } else {
       print('StatusCode: ${response.statusCode}');
+      print('Error: ${response.data}');
     }
   } catch (e) {
     print('Error: $e');

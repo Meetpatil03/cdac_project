@@ -778,49 +778,69 @@ class _FormPageState extends State<FormPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if ((regionsValue?.isNotEmpty ?? false) &&
-                      longitude != 0 &&
-                      latitude != 0 &&
-                      altitude.isNotEmpty &&
-                      speed.isNotEmpty &&
-                      time.isNotEmpty &&
-                      descriptionController.text.isNotEmpty &&
-                      (deptValue?.isNotEmpty ?? false) &&
-                      (ownersValue?.isNotEmpty ?? false) &&
-                      projectNameController.text.isNotEmpty &&
-                      (assetsValue?.isNotEmpty ?? false) &&
-                      (assetsSubTypeValue?.isNotEmpty ?? false) &&
-                      dateController.text.isNotEmpty &&
-                      assetNameController.text.isNotEmpty &&
-                      statusValue!.isNotEmpty &&
-                      file.isNotEmpty) {
-                    pushSurveyDataToDatabase(
-                        regionsValue!,
+                  // if ((regionsValue?.isNotEmpty ?? false) &&
+                  //     longitude != 0 &&
+                  //     latitude != 0 &&
+                  //     altitude.isNotEmpty &&
+                  //     speed.isNotEmpty &&
+                  //     time.isNotEmpty &&
+                  //     descriptionController.text.isNotEmpty &&
+                  //     (deptValue?.isNotEmpty ?? false) &&
+                  //     (ownersValue?.isNotEmpty ?? false) &&
+                  //     projectNameController.text.isNotEmpty &&
+                  //     (assetsValue?.isNotEmpty ?? false) &&
+                  //     (assetsSubTypeValue?.isNotEmpty ?? false) &&
+                  //     dateController.text.isNotEmpty &&
+                  //     assetNameController.text.isNotEmpty &&
+                  //     statusValue!.isNotEmpty &&
+                  //     file.isNotEmpty) {
+                  //   pushSurveyDataToDatabase(
+                  //       regionsValue!,
+                  //       longitude,
+                  //       latitude,
+                  //       altitude,
+                  //       speed,
+                  //       time,
+                  //       descriptionController.text.toString(),
+                  //       deptValue!,
+                  //       ownersValue!,
+                  //       projectNameController.text.toString(),
+                  //       assetsValue!,
+                  //       assetsSubTypeValue!,
+                  //       dateController.text.toString(),
+                  //       assetNameController.text.toString(),
+                  //       statusValue!,
+                  //       file);
+                  // } else {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(
+                  //       content: Text("Some of the Field is Empty"),
+                  //     ),
+                  //   );
+
+                  //   print(
+                  //       " Regions : $regionsValue \n longitude : $longitude \n latitude : $latitude \n altitude : $altitude \n speed : $speed \n time : $time \n description : ${descriptionController.text.toString()} \n deptValue : $deptValue \n ownerValue : $ownersValue \n projectName : ${projectNameController.text.toString()} \n assetsValue : $assetsValue \n assetSubTypeName : $assetsSubTypeValue \n date : ${dateController.text.toString()} \n assetName : ${assetNameController.text.toString()} \n statusValue : $statusValue \n file : $file");
+                  // }
+
+
+                        pushSurveyDataToDatabase(
+                        "Europe",
                         longitude,
                         latitude,
                         altitude,
                         speed,
                         time,
                         descriptionController.text.toString(),
-                        deptValue!,
-                        ownersValue!,
+                        "Finance",
+                        "Government",
                         projectNameController.text.toString(),
-                        assetsValue!,
-                        assetsSubTypeValue!,
+                        "Building",
+                        "Residential Building",
                         dateController.text.toString(),
                         assetNameController.text.toString(),
-                        statusValue!,
+                        "Survey",
                         file);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Some of the Field is Empty"),
-                      ),
-                    );
 
-                    print(
-                        " Regions : $regionsValue \n longitude : $longitude \n latitude : $latitude \n altitude : $altitude \n speed : $speed \n time : $time \n description : ${descriptionController.text.toString()} \n deptValue : $deptValue \n ownerValue : $ownersValue \n projectName : ${projectNameController.text.toString()} \n assetsValue : $assetsValue \n assetSubTypeName : $assetsSubTypeValue \n date : ${dateController.text.toString()} \n assetName : ${assetNameController.text.toString()} \n statusValue : $statusValue \n file : $file");
-                  }
                 },
                 child: const Text(
                   'Send',
