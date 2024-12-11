@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survi_app/functions/tasks_dialog.dart';
 
 import 'package:survi_app/models/task_list.dart';
 import 'package:survi_app/services/markers_database.dart';
@@ -73,43 +74,68 @@ class _ReadLogsState extends State<ReadLogs> {
           }
 
           List<TaskList> taskList = snapshot.data!;
+          int totalTask = 0;
+          for (int i = 0; i < taskList.length; i++) {
+            TaskList task = taskList[i];
+            if (task.taskId != totalTask) {
+              totalTask++;
+            }
+          }
 
+          print(totalTask);
           return ListView.builder(
-            itemCount: taskList.length,
-            itemBuilder: (context, index) {
-              TaskList task = taskList[index];
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 5),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text('Task Id: ${task.taskId}'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text('agentId: ${task.agentId}'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text('latitude: ${task.latitude}'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text('longitude: ${task.longitude}'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+              itemCount: totalTask,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.yellow,
+                            child: Text(
+                              "${index + 1}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.05),
+                          const Text(
+                            "Task",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                         await showStops(context, index + 1);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text(
+                          "Go",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
         });
   }
 }

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart';
 import 'package:survi_app/apis/web_services.dart';
 import 'package:survi_app/functions/send_live_location.dart';
 import 'package:survi_app/screens/form_page.dart';
 import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/map_view.dart';
-import 'package:survi_app/screens/markers_view.dart';
 import 'package:survi_app/screens/read_log_screen.dart';
 import 'package:survi_app/widgets/custom_text.dart';
 
@@ -47,40 +46,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
-          fontSize: 50,
-          text: 'AssetTracker',
+        title: const Text(
+          "AssetTracker",
+          style: TextStyle(
+              fontSize: 50, fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        backgroundColor: Colors.purple,
         actions: [
           IconButton(
             onPressed: logout,
+            style: IconButton.styleFrom(backgroundColor: Colors.red),
             icon: const Icon(Icons.logout_outlined),
           ),
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             height: size.height * 0.065,
           ),
-          Image.asset(
-            'assets/images/survey_man.png',
-            width: 150,
-            height: 150,
-          ),
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.25),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const FormPage(),
                   ),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                  shape: const RoundedRectangleBorder(),
+                  backgroundColor: Colors.purple,
+                  minimumSize: Size(140, 50),
+                  ),
               child: const Text(
                 'Survey Form',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, color: Colors.white),
               ),
             ),
           ),
@@ -108,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 1000),
               padding: const EdgeInsets.all(8),
-              height: 40,
+              height: 50,
               width: isTrackingPerson ? 240 : 140,
               decoration: BoxDecoration(
                 color: isTrackingPerson ? Colors.green : Colors.blue,
@@ -129,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : const Text(
                       'Start Tracking',
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.white),
                     ),
             ),
           ),
@@ -143,9 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-                minimumSize: Size(size.width * 0.25, 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
+                minimumSize: const Size(140, 50),
+                shape: const RoundedRectangleBorder(),
                 backgroundColor: Colors.green),
             child: const Text(
               "Map",
@@ -155,28 +159,38 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          SizedBox(height: size.height * 0.08),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ReadLogs()));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              shape: const RoundedRectangleBorder(),
+              minimumSize: Size(140, 50)
+            ),
+            child: const Text(
+              'Task List',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
           const SizedBox(
             height: 30,
           ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => ReadLogs()));
-              },
-              child: const Text('Task List')),
-          const SizedBox(
-            height: 30,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const MarkersMapView(),
-                  ),
-                );
-              },
-              child: const Text('Markers Liat')),
-          SizedBox(height: 20),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       Navigator.of(context).push(
+          //         MaterialPageRoute(
+          //           builder: (context) => const MarkersMapView(),
+          //         ),
+          //       );
+          //     },
+          //     child: const Text('Markers Liat')),
+          // SizedBox(height: 20),
         ],
       ),
     );

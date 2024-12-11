@@ -95,21 +95,30 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.indigo[900],
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            mainArtBoard != null
-                ? SizedBox(
-                    height: 300,
-                    width: size.width,
-                    child: Rive(
-                      artboard: mainArtBoard!,
-                    ))
-                : Container(),
-            const CustomText(fontSize: 80, text: 'Login'),
+            SizedBox(height: size.height * 0.25),
+            // mainArtBoard != null
+            //     ? SizedBox(
+            //         height: 300,
+            //         width: size.width,
+            //         child: Rive(
+            //           artboard: mainArtBoard!,
+            //         ))
+            //     : Container(),
+            // const CustomText(fontSize: 80, text: 'Login'),
+            const Text(
+              "Login",
+              style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple),
+            ),
             SizedBox(
               height: size.height * 0.05,
             ),
@@ -133,12 +142,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 5, color: Colors.blue),
+                    borderSide: const BorderSide(width: 5, color: Colors.purpleAccent),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(width: 2, color: Colors.purple),
+                        const BorderSide(width: 2, color: Colors.purpleAccent),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   suffixIcon: const Icon(Icons.mail),
@@ -172,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscuringCharacter: '*',
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 5, color: Colors.blue),
+                    borderSide: const BorderSide(width: 5, color: Colors.purpleAccent),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -194,11 +203,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                webService.loginFunction(
-                    emailController.text, passwordController.text, _identifier,context);
+                webService.loginFunction(emailController.text,
+                    passwordController.text, _identifier, context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.purple,
                 minimumSize: Size(size.width / 3, 40),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),

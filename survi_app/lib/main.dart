@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:survi_app/provider_services/workmanager_services.dart';
-import 'package:survi_app/screens/home_page.dart';
+import 'package:survi_app/screens/login_screens/login_page.dart';
 import 'package:survi_app/screens/splash_screen.dart';
 import 'package:survi_app/services/log_services.dart';
 
@@ -18,16 +18,16 @@ class MyApp extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Asset Tracker',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromRGBO(13, 16, 34, 1),
-        appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: const Color.fromRGBO(13, 16, 34, 1),
-        ),
-      ),
-      home: const HomeScreen(),
+      // theme: ThemeData.dark().copyWith(
+      //   scaffoldBackgroundColor: const Color.fromRGBO(13, 16, 34, 1),
+      //   appBarTheme: const AppBarTheme().copyWith(
+      //     backgroundColor: const Color.fromRGBO(13, 16, 34, 1),
+      //   ),
+      // ),
+      home: LoginScreen(),
     );
   }
 }

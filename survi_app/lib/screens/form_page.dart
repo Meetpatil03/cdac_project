@@ -19,7 +19,6 @@ import 'package:survi_app/widgets/custom_text.dart';
 import 'package:survi_app/widgets/custom_text_field.dart';
 import 'package:survi_app/widgets/drop_down_list.dart';
 
-
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
 
@@ -675,11 +674,12 @@ class _FormPageState extends State<FormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
-          fontSize: 30,
-          text: 'Agents Survey',
+        title: const Text(
+          "Agents Survey",
+          style: TextStyle(fontSize: 30, color: Colors.white),
         ),
         centerTitle: true,
+        backgroundColor: Colors.purple,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -764,7 +764,7 @@ class _FormPageState extends State<FormPage> {
                     file = pickedFiles;
                   });
                 },
-                child: const Text('Upload files'),
+                child: const Text('Upload files',style: TextStyle(fontSize: 16),),
               ),
               file.isNotEmpty
                   ? Column(
@@ -822,26 +822,28 @@ class _FormPageState extends State<FormPage> {
                   //       " Regions : $regionsValue \n longitude : $longitude \n latitude : $latitude \n altitude : $altitude \n speed : $speed \n time : $time \n description : ${descriptionController.text.toString()} \n deptValue : $deptValue \n ownerValue : $ownersValue \n projectName : ${projectNameController.text.toString()} \n assetsValue : $assetsValue \n assetSubTypeName : $assetsSubTypeValue \n date : ${dateController.text.toString()} \n assetName : ${assetNameController.text.toString()} \n statusValue : $statusValue \n file : $file");
                   // }
 
-
-                        pushSurveyDataToDatabase(
-                        "Europe",
-                        longitude,
-                        latitude,
-                        altitude,
-                        speed,
-                        time,
-                        descriptionController.text.toString(),
-                        "Finance",
-                        "Government",
-                        projectNameController.text.toString(),
-                        "Building",
-                        "Residential Building",
-                        dateController.text.toString(),
-                        assetNameController.text.toString(),
-                        "Survey",
-                        file);
-
+                  pushSurveyDataToDatabase(
+                      "Europe",
+                      longitude,
+                      latitude,
+                      altitude,
+                      speed,
+                      time,
+                      descriptionController.text.toString(),
+                      "Finance",
+                      "Government",
+                      projectNameController.text.toString(),
+                      "Building",
+                      "Residential Building",
+                      dateController.text.toString(),
+                      assetNameController.text.toString(),
+                      "Survey",
+                      file);
                 },
+                 style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(140, 50),
+                  shape: const RoundedRectangleBorder(),
+                ),
                 child: const Text(
                   'Send',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -850,18 +852,22 @@ class _FormPageState extends State<FormPage> {
               SizedBox(
                 height: size.height * 0.05,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AgentsSurveyList()));
-                },
-                child: const Text(
-                  'Navigate to Survey List',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //             builder: (context) => const AgentsSurveyList()));
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     minimumSize: const Size(140, 50),
+              //     shape: const RoundedRectangleBorder(),
+              //   ),
+              //   child: const Text(
+              //     ' Saved Survey List',
+              //     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              //   ),
+              // ),
             ],
           ),
         ),

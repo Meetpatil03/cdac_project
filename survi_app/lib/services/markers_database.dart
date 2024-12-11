@@ -79,4 +79,28 @@ class MarkersDatabase {
 
     return routes;
   }
+
+  Future<List<TaskList>> getParticularTasksRoute(int taskId) async {
+    final db = await database;
+    final data =
+        await db.query(_tablesName, where: '$taskId = ?', whereArgs: [taskId]);
+
+    List<TaskList> stops = data
+        .map(
+          (e) => TaskList(
+            id: e[_idColumn] as int,
+            taskId: (e[_taskIdColumn] as num).toInt(),
+            agentId: e[_agentIdColumn] as String,
+            routeId: e[_routeIdColumn] as String,
+            latitude: (e[_latitudeColumn] as num).toDouble(),
+            longitude: (e[_longitudeColumn] as num).toDouble(),
+            status: (e[_statusColumn] as num).toInt(),
+            userId: e[_userIdColumn] as String,
+          ),
+        )
+        .toList();
+
+    return stops;
+  }
+
 }
